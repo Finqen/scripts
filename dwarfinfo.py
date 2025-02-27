@@ -9,6 +9,7 @@ class DwarfFunctionInfo:
         self.path = path
         self.line = line
         self.offset = offset
+        self.verification = False
 
 def get_srcinfo(dwarf):
     function_container = []
@@ -70,17 +71,19 @@ def pretty_print(srcinfo):
     table.field_names = ["Function", "Line", "Path"]
 
     count_functions = 0
-    ends_not_with_suffix = 0
+    verifications = 0
 
     for row in srcinfo:
         table.add_row([row.name, row.path, row.line])
         count_functions += 1
-        if not row.path.endswith(determine_compiler()):
-            ends_not_with_suffix += 1
+        if row.path.endswith(determine_compiler()):
+            if traverse_for_function(row.name, row.line, row.path):
+                row.verification = True
+                verifications += 1
 
     
     print(table)
-    print_metrics(1 - (0 if ends_not_with_suffix == 0 else ends_not_with_suffix / count_functions), count_functions, ends_not_with_suffix)
+    print_metrics((verifications / count_functions), count_functions, 1-verifications)
 
 
     
@@ -94,6 +97,13 @@ def print_metrics(ver_score, count_functions, ends_not_with_suffix):
 def to_percentage_string(percentage_float):
     return str(percentage_float * 100)[0:5] + " %"
 
+def traverse_for_function(function_name, line, path):
+    source_file = open(path)
+    for i, source_file_line in enumerate(source_file):
+        if i == line:
+            print(source_file_line) if function_name in source_file_line else print("Function not found!")
+            return True
+    return False
 
 if __name__ == '__main__':
     main(sys.argv[1])
