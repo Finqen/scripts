@@ -5,9 +5,7 @@ from prettytable import PrettyTable
 
 
 def get_srcinfo(dwarf):
-    #print("starting retrieving dwarf")
     srcinfo = defaultdict(list)
-
     for CU in dwarf.iter_CUs():
         lineprog = dwarf.line_program_for_CU(CU)
         file_entries = lineprog.header['file_entry']
