@@ -1,11 +1,18 @@
-from collections import defaultdict
+# from collections import defaultdict
 import os, sys
 from elftools.elf.elffile import ELFFile
 from prettytable import PrettyTable
 
+class DwarfFunctionInfo:
+    def __init__(self, name, path, line, offset):
+        self.name = name
+        self.path = path
+        self.line = line
+        self.offset = offset
 
 def get_srcinfo(dwarf):
-    srcinfo = defaultdict(list)
+    function_container = []
+    # srcinfo = defaultdict(list)
     for CU in dwarf.iter_CUs():
         lineprog = dwarf.line_program_for_CU(CU)
         file_entries = lineprog.header['file_entry']
@@ -36,66 +43,56 @@ def get_srcinfo(dwarf):
                     except KeyError:
                         offset = 0
                     
-                    srcinfo[name].append((path, offset, line))
+                    function_container.append(DwarfFunctionInfo(name, path, line, offset))
+
         except KeyError:
             continue
-    return srcinfo
+    return function_container
 
 def main(path):
-    print("Starting script for <" + path + "> ...")
+    print("Starting script for " + path.rsplit('/', 1) + " ...")
     # check for DWARF information
     srcinfo = None
     with open(path, 'rb') as fo:
         elffile = ELFFile(fo)
         if elffile.has_dwarf_info():
-            print("<" + path + ">" + " has dwarf info...")
             dwarfinfo = elffile.get_dwarf_info()
             srcinfo = get_srcinfo(dwarfinfo)
-    prettyPrint(srcinfo, path)
+    pretty_print(srcinfo)
 
 
-def determineCompiler():
+def determine_compiler():
     return ".c"
-    return ".cpp"
-    return ".rs"
 
-def prettyPrint(srcinfo, path):
+def pretty_print(srcinfo):
 
     table = PrettyTable()
     table.field_names = ["Function", "Line", "Path"]
 
-    pathArray = path.split(".")
-    
-
-    countFunctions = 0
-    endsNotWith_c = 0
+    count_functions = 0
+    ends_not_with_suffix = 0
 
     for row in srcinfo:
-        # Setting vars
-        name = row
-        path = srcinfo[row][0][0]
-        line = srcinfo[row][0][2]
-
-        table.add_row([name, path, line])
-        countFunctions += 1
-        if not path.endswith(determineCompiler()):
-            endsNotWith_c += 1
+        table.add_row([row.name, row.path, row.line])
+        count_functions += 1
+        if not row.path.endswith(determine_compiler()):
+            ends_not_with_suffix += 1
 
     
     print(table)
-    printMetrics(1-(0 if endsNotWith_c == 0 else endsNotWith_c/countFunctions), countFunctions, endsNotWith_c)
+    print_metrics(1 - (0 if ends_not_with_suffix == 0 else ends_not_with_suffix / count_functions), count_functions, ends_not_with_suffix)
 
 
     
-def printMetrics(verScore, countFunctions, endsNotWith_c):
-    metricsTable = PrettyTable()
-    metricsTable.field_names = ["Verification score", "Functions analyzed", "Wrong suffix"]
-    metricsTable.add_row([toPercentageString(verScore), countFunctions, endsNotWith_c])
-    print(metricsTable)
+def print_metrics(ver_score, count_functions, ends_not_with_suffix):
+    metrics_table = PrettyTable()
+    metrics_table.field_names = ["Verification score", "Functions analyzed", "Wrong suffix"]
+    metrics_table.add_row([to_percentage_string(ver_score), count_functions, ends_not_with_suffix])
+    print(metrics_table)
 
 
-def toPercentageString(float):
-    return str(float*100)[0:5] + " %"
+def to_percentage_string(percentage_float):
+    return str(percentage_float * 100)[0:5] + " %"
 
 
 if __name__ == '__main__':
