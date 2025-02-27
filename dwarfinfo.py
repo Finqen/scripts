@@ -42,7 +42,7 @@ def get_srcinfo(dwarf):
                         offset = DIE.attributes['DW_AT_low_pc'].value
                     except KeyError:
                         offset = 0
-                    
+
                     function_container.append(DwarfFunctionInfo(name, path, line, offset))
 
         except KeyError:
@@ -50,7 +50,7 @@ def get_srcinfo(dwarf):
     return function_container
 
 def main(path):
-    print("Starting script for " + path.rsplit('/', 1) + " ...")
+    print("Starting script for " + path.rsplit('/', 1)[0] + " ...")
     # check for DWARF information
     srcinfo = None
     with open(path, 'rb') as fo:
