@@ -83,7 +83,7 @@ def pretty_print(srcinfo):
 
     
     print(table)
-    print_metrics((verifications / count_functions), count_functions, 1-verifications)
+    print_metrics((verifications / count_functions) if verifications > 0 else 0, count_functions, count_functions-verifications)
 
 
     
