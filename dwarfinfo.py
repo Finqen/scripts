@@ -100,9 +100,12 @@ def to_percentage_string(percentage_float):
 def traverse_for_function(function_name, line, path):
     source_file = open(path)
     for i, source_file_line in enumerate(source_file):
-        if i == line:
-            print(source_file_line) if function_name in source_file_line else print("Function not found!")
-            return True
+        if i == line-1:
+            if function_name in source_file_line:
+                source_file.close()
+                return True
+            break
+    source_file.close()
     return False
 
 if __name__ == '__main__':
