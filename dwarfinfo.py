@@ -119,11 +119,15 @@ def traverse_for_function(row):
     source_file = open(path)
     for i, source_file_line in enumerate(source_file, 1):
         if i == line:
+            next_line = source_file.readlines()[0]
             if check_if_really_a_function(function_name, source_file_line):
                 source_file.close()
                 return None
             # readlines okay here, because we want to stop iterating after
-            elif check_if_really_a_function_next_line(function_name, source_file_line, source_file.readlines()[0]):
+            elif check_if_really_a_function_next_line(function_name, source_file_line, next_line):
+                source_file.close()
+                return None
+            elif check_if_really_a_function_next_lines(function_name, source_file_line, next_line, source_file.readlines()):
                 source_file.close()
                 return None
             break
@@ -133,8 +137,26 @@ def traverse_for_function(row):
 def check_if_really_a_function(function_name, line):
     return bool(re.search(function_name + r'\s*\(.*\)*\{', line))
 
+def check_function_definition(function_name, line):
+    return bool(re.search(function_name + r'\s*\(.*\)', line))
+
+def check_curly_brace(line):
+    return bool(re.search(r'\s*\{', line))
+
 def check_if_really_a_function_next_line(function_name, line, next_line):
-    return bool(re.search(function_name + r'\s*\(.*\)', line)) and bool(re.search(r'\s*\{', next_line))
+    return check_function_definition(function_name, line) and check_curly_brace(next_line)
+
+def check_if_really_a_function_next_lines(function_name, line, next_line, rest_of_lines):
+    if check_function_definition(function_name, line):
+        if next_line.startswith("#"):
+            for i, rest_of_lines_line in enumerate(rest_of_lines):
+                if ";" in rest_of_lines_line:
+                    return False
+                elif check_curly_brace(rest_of_lines_line):
+                    return True
+                if rest_of_lines_line.startswith("#"):
+                    continue
+                return False
 
 def adjustement_for_fortify_functions(path, function_name):
     source_file = open(path)
