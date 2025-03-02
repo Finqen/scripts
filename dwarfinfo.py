@@ -11,6 +11,7 @@ class DwarfFunctionInfo:
         self.line = line
         self.offset = offset
         self.verification = False
+        self.verification_reason = None
 
 def get_srcinfo(dwarf):
     function_container = []
@@ -69,18 +70,18 @@ def determine_compiler():
 def pretty_print(srcinfo):
 
     table = PrettyTable()
-    table.field_names = ["Function", "Line", "Path"]
+    table.field_names = ["Function", "Line", "Path, Reason"]
 
     count_functions = 0
     verifications = 0
 
     for row in srcinfo:
-        table.add_row([row.name, row.path, row.line])
         count_functions += 1
-        if row.path.endswith(determine_compiler()):
-            if traverse_for_function(row.name, row.line, row.path):
-                row.verification = True
-                verifications += 1
+        if traverse_for_function(row):
+            row.verification = True
+            verifications += 1
+        if row.verification:
+            table.add_row([row.name, row.line, row.path, row.verification_reason])
 
     
     print(table)
@@ -88,21 +89,26 @@ def pretty_print(srcinfo):
 
 
     
-def print_metrics(ver_score, count_functions, ends_not_with_suffix):
+def print_metrics(ver_score, count_functions, fails):
     metrics_table = PrettyTable()
-    metrics_table.field_names = ["Verification score", "Functions analyzed", "Wrong suffix"]
-    metrics_table.add_row([to_percentage_string(ver_score), count_functions, ends_not_with_suffix])
+    metrics_table.field_names = ["Verification score", "Functions analyzed", "Fails"]
+    metrics_table.add_row([to_percentage_string(ver_score), count_functions, fails])
     print(metrics_table)
 
 
 def to_percentage_string(percentage_float):
     return str(percentage_float * 100)[0:5] + " %"
 
-def traverse_for_function(function_name, line, path):
+def traverse_for_function(row):
+    path = row.path
+    function_name = row.function_name
+    line = row.line
+
     # Guards for special cases
     # .h Class
     if path.endswith(".h"):
         if not adjustement_for_fortify_functions(path, function_name):
+            row.verification_reason = "h. File - Prototype function"
             return False
     # rlp_ function
     if function_name.startswith(get_malloc_prefixes()):
@@ -117,6 +123,7 @@ def traverse_for_function(function_name, line, path):
             elif check_if_really_a_function_next_line(function_name, source_file_line, source_file.readlines()[0]):
                 source_file.close()
                 return True
+            row.verification_reason = "Not a function"
             break
     source_file.close()
     return False
