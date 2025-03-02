@@ -77,9 +77,12 @@ def pretty_print(srcinfo):
 
     for row in srcinfo:
         count_functions += 1
-        if traverse_for_function(row):
+        row.verification_reason = traverse_for_function(row)
+
+        if row.verification_reason is None:
             row.verification = True
             verifications += 1
+
         if row.verification:
             table.add_row([row.name, row.line, row.path, row.verification_reason])
 
@@ -108,8 +111,7 @@ def traverse_for_function(row):
     # .h Class
     if path.endswith(".h"):
         if not adjustement_for_fortify_functions(path, function_name):
-            row.verification_reason = "h. File - Prototype function"
-            return False
+            return  "h. File - Prototype function"
     # rlp_ function
     if function_name.startswith(get_malloc_prefixes()):
         function_name = function_name.split("_")[1]
@@ -118,15 +120,14 @@ def traverse_for_function(row):
         if i == line:
             if check_if_really_a_function(function_name, source_file_line):
                 source_file.close()
-                return True
+                return None
             # readlines okay here, because we want to stop iterating after
             elif check_if_really_a_function_next_line(function_name, source_file_line, source_file.readlines()[0]):
                 source_file.close()
-                return True
-            row.verification_reason = "Not a function"
+                return None
             break
     source_file.close()
-    return False
+    return "Not a function!"
 
 def check_if_really_a_function(function_name, line):
     return bool(re.search(function_name + r'\s*\(.*\)*\{', line))
