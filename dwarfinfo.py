@@ -101,7 +101,7 @@ def to_percentage_string(percentage_float):
 
 def traverse_for_function(row):
     path = row.path
-    function_name = row.function_name
+    function_name = row.name
     line = row.line
 
     # Guards for special cases
