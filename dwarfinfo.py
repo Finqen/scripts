@@ -1,7 +1,8 @@
 # from collections import defaultdict
-import os, sys
+import os, sys, re
 from elftools.elf.elffile import ELFFile
 from prettytable import PrettyTable
+
 
 class DwarfFunctionInfo:
     def __init__(self, name, path, line, offset):
@@ -98,15 +99,50 @@ def to_percentage_string(percentage_float):
     return str(percentage_float * 100)[0:5] + " %"
 
 def traverse_for_function(function_name, line, path):
+    # Guards for special cases
+    # .h Class
+    if path.endswith(".h"):
+        if not adjustement_for_fortify_functions(path, function_name):
+            return False
+    # rlp_ function
+    if function_name.startswith(get_malloc_prefixes()):
+        function_name = function_name.split("_")[1]
     source_file = open(path)
-    for i, source_file_line in enumerate(source_file):
-        if i == line-1:
-            if function_name in source_file_line:
+    for i, source_file_line in enumerate(source_file, 1):
+        if i == line:
+            if check_if_really_a_function(function_name, source_file_line):
+                source_file.close()
+                return True
+            # readlines okay here, because we want to stop iterating after
+            elif check_if_really_a_function_next_line(function_name, source_file_line, source_file.readlines()[0]):
                 source_file.close()
                 return True
             break
     source_file.close()
     return False
+
+def check_if_really_a_function(function_name, line):
+    return bool(re.search(function_name + r'\s*\(.*\)*\{', line))
+
+def check_if_really_a_function_next_line(function_name, line, next_line):
+    return bool(re.search(function_name + r'\s*\(.*\)', line)) and bool(re.search(r'\s*\{', next_line))
+
+def adjustement_for_fortify_functions(path, function_name):
+    source_file = open(path)
+    for i, source_file_line in enumerate(source_file):
+        if '__fortify_function' in source_file_line:
+            source_file.close()
+            return True
+    return False
+
+def check_for_fortify_function(line, function_name):
+    return 0
+
+def get_malloc_prefixes():
+    prefixes = ["rlp_"]
+    return tuple(prefixes)
+
+
 
 if __name__ == '__main__':
     main(sys.argv[1])
