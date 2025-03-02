@@ -84,7 +84,7 @@ def pretty_print(srcinfo):
             row.verification = True
             verifications += 1
 
-        if row.verification:
+        if row.verification is False:
             table.add_row([row.name, row.line, row.path, row.verification_reason])
 
     
