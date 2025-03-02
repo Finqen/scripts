@@ -78,6 +78,7 @@ def pretty_print(srcinfo):
     for row in srcinfo:
         count_functions += 1
         row.verification_reason = traverse_for_function(row)
+        print(row.verification_reason)
 
         if row.verification_reason is None:
             row.verification = True
