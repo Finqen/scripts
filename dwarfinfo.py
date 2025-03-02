@@ -70,7 +70,7 @@ def determine_compiler():
 def pretty_print(srcinfo):
 
     table = PrettyTable()
-    table.field_names = ["Function", "Line", "Path, Reason"]
+    table.field_names = ["Function", "Line", "Path", "Reason"]
 
     count_functions = 0
     verifications = 0
