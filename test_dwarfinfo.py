@@ -2,6 +2,7 @@ from unittest import TestCase
 from dwarfinfo import DwarfFunctionInfo, pretty_print, traverse_for_function, check_if_really_a_function, \
     check_if_really_a_function_next_line, ts_get_function, tree_sitter_finding_bool
 from mock import patch
+import re
 
 
 class Test(TestCase):
@@ -68,3 +69,9 @@ class Test(TestCase):
     def test_ts_get_function_with_open_false(self):
         assert tree_sitter_finding_bool('testfiles/hello.h', 'main') == False
 
+    def test_regex(self):
+        line = "# define full_rw full_write\n"
+        name = "full_write"
+        match = re.match(r"# define\s+(\S+)\s+" + name, line)
+        print("Match: ", match.group(1))
+        assert match[1] == "full_rw"

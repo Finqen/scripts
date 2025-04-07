@@ -227,7 +227,7 @@ def defines_extension(path, name):
     print("defines_extension for: ",name," and ", path)
     code = get_code(path)
     for line in code:
-        match = re.match(r"#define\s+(\S+)\s+" + name, line)
+        match = re.match(r"# define\s+(\S+)\s+" + name, line)
         if match:
             print("Found:", line.strip())
             print("New name: " + match.group(1))
