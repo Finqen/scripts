@@ -241,6 +241,7 @@ def renaming(name):
 
     for prefix in prefixes:
         if name.startswith(prefix):
+            print("renaming:", name.replace(prefix, ""))
             return name.replace(prefix, "")
     return name
 
