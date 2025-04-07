@@ -238,7 +238,7 @@ def defines_extension(path, name):
 
 def renaming(name):
     prefixes = ["rlp_", "i_", "m_"]
-
+    print("Checking for renaming:", name)
     for prefix in prefixes:
         if name.startswith(prefix):
             print("renaming:", name.replace(prefix, ""))
