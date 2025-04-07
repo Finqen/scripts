@@ -234,7 +234,15 @@ def defines_extension(path, name):
         if match:
             print("New name: " + match.group(1).strip())
             return tree_sitter_finding_bool(path, match.group(1).strip())
-    return False
+    return tree_sitter_finding_bool(path, renaming(name))
+
+def renaming(name):
+    prefixes = ["rlp_", "i_", "m_"]
+
+    for prefix in prefixes:
+        if name.startswith(prefix):
+            return name.replace(prefix, "")
+    return name
 
 def print_if(string, name):
     if name == "full_write":
