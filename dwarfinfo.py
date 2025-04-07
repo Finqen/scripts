@@ -237,7 +237,7 @@ def defines_extension(path, name):
     return tree_sitter_finding_bool(path, renaming(name))
 
 def renaming(name):
-    prefixes = ["rlp_", "i_", "m_"]
+    prefixes = ["rpl_", "i_", "m_"]
     print("Checking for renaming:", name)
     for prefix in prefixes:
         if name.startswith(prefix):
