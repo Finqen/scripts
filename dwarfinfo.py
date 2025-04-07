@@ -217,7 +217,9 @@ def ts_get_function(code, function_name):
     tree = parser.parse(code.encode(encoding='utf-8'))
     if CFunction(tree, function_name).function_node is not None:
         return CFunction(tree, function_name).function_node.text.decode('utf-8') == function_name
-    return False
+    else:
+        print("tree sitter error:", function_name)
+        return False
 
 def get_code(path):
     with open(path, 'r') as file:
