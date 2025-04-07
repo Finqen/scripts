@@ -213,6 +213,7 @@ def tree_sitter_finding_bool(path, name):
     return ts_get_function(get_code(path), name)
 
 def ts_get_function(code, function_name):
+    print("tree sitter finding function:", function_name)
     tree = parser.parse(code.encode(encoding='utf-8'))
     if CFunction(tree, function_name).function_node is not None:
         return CFunction(tree, function_name).function_node.text.decode('utf-8') == function_name
