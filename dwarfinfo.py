@@ -227,16 +227,12 @@ def get_code(path):
 def defines_extension(path, name):
     print("defines_extension for: ",name," and ", path)
     code = get_code(path)
-    print_if(code, name)
-    for line in code:
-        print_if(line, name)
-        match = re.match(r"# define\s+(\S+)\s+" + name, line)
-        if match:
-            print("Found:", line.strip())
-            print("New name: " + match.group(1).trim())
-            return tree_sitter_finding_bool(path, match.group(1).trim())
-        else:
-            return False
+    match = re.match(r"# define\s+(\S+)\s+" + name, code)
+    if match:
+        print("New name: " + match.group(1).trim())
+        return tree_sitter_finding_bool(path, match.group(1).trim())
+    else:
+        return False
 
 def print_if(string, name):
     if name == "full_write":
