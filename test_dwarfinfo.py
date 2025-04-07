@@ -1,10 +1,18 @@
 from unittest import TestCase
 from dwarfinfo import DwarfFunctionInfo, pretty_print, traverse_for_function, check_if_really_a_function, \
-    check_if_really_a_function_next_line
+    check_if_really_a_function_next_line, ts_get_function
 from mock import patch
 
 
 class Test(TestCase):
+    class Object(object):
+        pass
+
+    row = Object()
+    row.function_name = 'main'
+    row.line = 1
+    row.path = 'testfiles/hello.c'
+
 
     @patch('dwarfinfo.traverse_for_function')
     def test_pretty_print(self, traverse_for_function_mock):
@@ -13,13 +21,19 @@ class Test(TestCase):
         pretty_print(srcinfo)
 
     def test_traverse_for_function(self):
-        assert traverse_for_function("main", 1, "testfiles/hello.c") == True
+        row = Test.row
+        assert traverse_for_function(row) == True
 
     def test_traverse_for_function_h(self):
-        assert traverse_for_function("main", 2, "testfiles/hello.h") == True
+        row = Test.row
+        row.line = 2
+        row.path = 'testfiles/hello_fort.h'
+        assert traverse_for_function(row) == True
 
     def test_traverse_for_function_next_line(self):
-        assert traverse_for_function("main", 1, "testfiles/hello_next_line.c") == True
+        row = Test.row
+        row.path = 'testfiles/hello_next_line.c'
+        assert traverse_for_function(row) == True
 
     def test_traverse_for_function_malloc(self):
         assert traverse_for_function("rlp_main", 1, "testfiles/hello.c") == True
@@ -36,3 +50,14 @@ class Test(TestCase):
     def test_check_if_really_afunction_false(self):
         assert check_if_really_a_function("main", "int main();") == False
 
+    def test_ts_get_function(self):
+        with open('testfiles/hello.c') as f: code = f.read()
+        assert ts_get_function(code, 'main') == True
+
+    def test_ts_get_function_h_fort_file(self):
+        with open('testfiles/hello_fort.h') as f: code = f.read()
+        assert ts_get_function(code, 'main') == True
+
+    def test_ts_get_function_h_file(self):
+        with open('testfiles/hello.h') as f: code = f.read()
+        assert ts_get_function(code, 'main') == False

@@ -1,3 +1,7 @@
 .venv
 .idea
 testfiles/c
+
+.DS_Store
+__pycache__/
+testfiles/.DS_Store

@@ -2,7 +2,32 @@
 import os, sys, re
 from elftools.elf.elffile import ELFFile
 from prettytable import PrettyTable
+from tree_sitter import Parser, Language
+import tree_sitter_c as ts_c
 
+# tree-sitter global object
+C_LANGUAGE = Language(ts_c.language())
+parser = Parser(C_LANGUAGE)
+
+FUNCTION_QUERY= """
+(
+    ( function_definition
+        declarator: ( function_declarator
+            declarator: (identifier) @function_names (#eq? @function_names "{function_name}")
+        )
+        body: (compound_statement) @function.body
+    )
+)
+"""
+class CFunction:
+    def __init__(self, tree, function_name):
+        function_query = C_LANGUAGE.query(FUNCTION_QUERY.format(function_name=function_name))
+        function_captures = function_query.captures(tree.root_node)
+
+        if function_captures:
+            self.function_node = function_captures['function_names'][0]
+        else:
+            self.function_node = None
 
 class DwarfFunctionInfo:
     def __init__(self, name, path, line, offset):
@@ -173,7 +198,11 @@ def get_malloc_prefixes():
     prefixes = ["rlp_"]
     return tuple(prefixes)
 
-
+def ts_get_function(code, function_name):
+    tree = parser.parse(code.encode(encoding='utf-8'))
+    if CFunction(tree, function_name).function_node is not None:
+        return CFunction(tree, function_name).function_node.text.decode('utf-8') == function_name
+    return False
 
 if __name__ == '__main__':
     main(sys.argv[1])
