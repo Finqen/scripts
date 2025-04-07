@@ -117,7 +117,10 @@ def pretty_print(srcinfo, src_path):
             if tree_sitter_finding_bool(src_path + row.path, row.name):
                 verifications += 1
             else:
-                table.add_row([row.name, row.line, row.path, ''])
+                if defines_extension(src_path + row.path, row.name):
+                    verifications += 1
+                else:
+                    table.add_row([row.name, row.line, row.path, ''])
         else:
             print(row.path)
 
@@ -219,6 +222,15 @@ def get_code(path):
     with open(path, 'r') as file:
         code = file.read()
     return code
+
+def defines_extension(path, name):
+    code = get_code(path)
+    for line in code:
+        match = re.match(r"#define\s+(\S+)\s+" + name, line)
+        if match:
+            return ts_get_function(code, match.group(1))
+        else:
+            return False
 
 if __name__ == '__main__':
     main(sys.argv[1], sys.argv[2])
