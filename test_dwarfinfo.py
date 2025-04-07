@@ -1,6 +1,6 @@
 from unittest import TestCase
 from dwarfinfo import DwarfFunctionInfo, pretty_print, traverse_for_function, check_if_really_a_function, \
-    check_if_really_a_function_next_line, ts_get_function
+    check_if_really_a_function_next_line, ts_get_function, tree_sitter_finding_bool
 from mock import patch
 
 
@@ -61,3 +61,10 @@ class Test(TestCase):
     def test_ts_get_function_h_file(self):
         with open('testfiles/hello.h') as f: code = f.read()
         assert ts_get_function(code, 'main') == False
+
+    def test_ts_get_function_with_open(self):
+        assert tree_sitter_finding_bool('testfiles/hello_fort.h', 'main') == True
+
+    def test_ts_get_function_with_open_false(self):
+        assert tree_sitter_finding_bool('testfiles/hello.h', 'main') == False
+

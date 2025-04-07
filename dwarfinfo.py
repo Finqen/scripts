@@ -77,7 +77,7 @@ def get_srcinfo(dwarf):
             continue
     return function_container
 
-def main(path):
+def main(path, src_path):
     print("Starting script for " + path.rsplit('/', 1)[0] + " ...")
     # check for DWARF information
     srcinfo = None
@@ -86,13 +86,13 @@ def main(path):
         if elffile.has_dwarf_info():
             dwarfinfo = elffile.get_dwarf_info()
             srcinfo = get_srcinfo(dwarfinfo)
-    pretty_print(srcinfo)
+    pretty_print(srcinfo, src_path)
 
 
 def determine_compiler():
     return ".c"
 
-def pretty_print(srcinfo):
+def pretty_print(srcinfo, src_path):
 
     table = PrettyTable()
     table.field_names = ["Function", "Line", "Path", "Reason"]
@@ -102,6 +102,7 @@ def pretty_print(srcinfo):
 
     for row in srcinfo:
         count_functions += 1
+        '''
         row.verification_reason = traverse_for_function(row)
         print(row.verification_reason)
 
@@ -111,8 +112,11 @@ def pretty_print(srcinfo):
 
         if row.verification is False:
             table.add_row([row.name, row.line, row.path, row.verification_reason])
+        '''
 
-    
+        if tree_sitter_finding_bool(src_path + row.path, row.name):
+            verifications += 1
+
     print(table)
     print_metrics((verifications / count_functions) if verifications > 0 else 0, count_functions, count_functions-verifications)
 
@@ -198,11 +202,19 @@ def get_malloc_prefixes():
     prefixes = ["rlp_"]
     return tuple(prefixes)
 
+def tree_sitter_finding_bool(path, name):
+    return ts_get_function(get_code(path), name)
+
 def ts_get_function(code, function_name):
     tree = parser.parse(code.encode(encoding='utf-8'))
     if CFunction(tree, function_name).function_node is not None:
         return CFunction(tree, function_name).function_node.text.decode('utf-8') == function_name
     return False
 
+def get_code(path):
+    with open(path, 'r') as file:
+        code = file.read()
+    return code
+
 if __name__ == '__main__':
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])
