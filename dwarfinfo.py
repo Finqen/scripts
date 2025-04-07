@@ -231,7 +231,7 @@ def defines_extension(path, name):
         if match:
             print("Found:", line.strip())
             print("New name: " + match.group(1).trim())
-            return ts_get_function(code, match.group(1).trim())
+            return tree_sitter_finding_bool(path, match.group(1).trim())
         else:
             return False
 
