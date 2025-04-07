@@ -116,6 +116,8 @@ def pretty_print(srcinfo, src_path):
         if not(row.path.startswith('/usr/include')):
             if tree_sitter_finding_bool(src_path + row.path, row.name):
                 verifications += 1
+            else:
+                table.add_row([row.name, row.line, row.path, ''])
         else:
             print(row.path)
 
