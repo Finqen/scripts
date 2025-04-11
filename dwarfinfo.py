@@ -27,7 +27,9 @@ class CFunction:
         if function_captures:
             self.function_node = function_captures['function_names'][0]
         else:
+            print("Tree sitter CFunction error for:", function_name)
             self.function_node = None
+
 
 class DwarfFunctionInfo:
     def __init__(self, name, path, line, offset):
@@ -78,7 +80,8 @@ def get_srcinfo(dwarf):
     return function_container
 
 def main(path, src_path):
-    print("Starting script for " + path.rsplit('/', 1)[0] + " ...")
+    program = path.rsplit('/')
+    print("Starting script for " + program[len(program)] + " ...")
     # check for DWARF information
     srcinfo = None
     with open(path, 'rb') as fo:
@@ -237,7 +240,7 @@ def defines_extension(path, name):
     return tree_sitter_finding_bool(path, renaming(name))
 
 def renaming(name):
-    prefixes = ["rpl_", "i_", "m_"]
+    prefixes = ["rpl_", "i_", "m_", "i", "m", "x"]
     print("Checking for renaming:", name)
     for prefix in prefixes:
         if name.startswith(prefix):
