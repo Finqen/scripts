@@ -233,7 +233,7 @@ def defines_extension(path, name):
     print("defines_extension for: ",name," and ", path)
     code = get_code(path)
     for line in code.splitlines():
-        match = re.match(r"# define\s+(\S+)\s+" + name, line)
+        match = re.match(r"#\s*define\s+(\S+)\s+" + name, line)
         if match:
             print("New name: " + match.group(1).strip())
             return tree_sitter_finding_bool(path, match.group(1).strip())
