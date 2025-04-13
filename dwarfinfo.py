@@ -104,7 +104,14 @@ def pretty_print(srcinfo, src_path):
     count_functions = 0
     verifications = 0
 
+
+
+
     for row in srcinfo:
+        combined_path = src_path + row.path
+        if row.path.startswith('../'):
+            combined_path = src_path + row.path.replace('../', '')
+
         count_functions += 1
         '''
         row.verification_reason = traverse_for_function(row)
@@ -122,10 +129,10 @@ def pretty_print(srcinfo, src_path):
             print(row.path, row.line, row.name)
             print('--------------------------')
         else:
-            if tree_sitter_finding_bool(src_path + row.path, row.name):
+            if tree_sitter_finding_bool(combined_path, row.name):
                 verifications += 1
             else:
-                if defines_extension(src_path + row.path, row.name):
+                if defines_extension(combined_path, row.name):
                     verifications += 1
                 else:
                     table.add_row([row.name, row.line, row.path, ''])
