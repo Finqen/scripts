@@ -215,20 +215,23 @@ def tree_sitter_finding_bool(path, name):
     return ts_get_function(get_code(path), name)
 
 def ts_get_function(code, function_name):
-    #print("tree sitter finding function:", function_name)
-    tree = parser.parse(code.encode(encoding='utf-8'))
-    #print_if(tree.root_node.__str__(), function_name)
-    #if CFunction(tree, function_name).function_node is not None:
-       # return CFunction(tree, function_name).function_node.text.decode('utf-8') == function_name
-    #else:
-        #print("tree sitter error:", function_name)
-        #return False
+    if function_name == 'fseeko':
+        #print("tree sitter finding function:", function_name)
+        tree = parser.parse(code.encode(encoding='utf-8'))
+        #print_if(tree.root_node.__str__(), function_name)
+        #if CFunction(tree, function_name).function_node is not None:
+           # return CFunction(tree, function_name).function_node.text.decode('utf-8') == function_name
+        #else:
+            #print("tree sitter error:", function_name)
+            #return False
 
-    function_names_tree = (find_function_names(tree.root_node))
-    for x in function_names_tree:
-        print(x)
-    if function_name in function_names_tree:
-        return True
+        function_names_tree = (find_function_names(tree.root_node))
+        for x in function_names_tree:
+            print(x)
+        if function_name in function_names_tree:
+            return True
+        else:
+            return False
     else:
         return False
 
@@ -239,7 +242,7 @@ def get_code(path):
 
 def find_function_names(node):
     function_names = []
-    print("Searching for function names in tree...node.type", str(node.text))
+    print("Searching for function names in tree...node", str(node.type))
     if str(node.type) == 'function_declaration':
         for child in node.named_children:
             if str(child.type) == 'identifier':
