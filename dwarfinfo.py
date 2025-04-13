@@ -128,8 +128,7 @@ def pretty_print(srcinfo, src_path):
                 if defines_extension(src_path + row.path, row.name):
                     verifications += 1
                 else:
-                    print(row.name, row.line, row.path)
-                table.add_row([row.name, row.line, row.path, ''])
+                    table.add_row([row.name, row.line, row.path, ''])
 
     print(table)
     print_metrics((verifications / count_functions) if verifications > 0 else 0, count_functions, count_functions-verifications)
