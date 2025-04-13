@@ -125,8 +125,6 @@ def pretty_print(srcinfo, src_path):
             else:
                 print(row.name, row.line, row.path)
             table.add_row([row.name, row.line, row.path, ''])
-    else:
-        print(row.path)
 
     print(table)
     print_metrics((verifications / count_functions) if verifications > 0 else 0, count_functions, count_functions-verifications)
@@ -207,7 +205,7 @@ def adjustement_for_fortify_functions(path, function_name):
     return False
 
 def tree_sitter_finding_bool(path, name):
-    print_if(path, name)
+    #print_if(path, name)
     return ts_get_function(get_code(path), name)
 
 def ts_get_function(code, function_name):
@@ -224,9 +222,9 @@ def ts_get_function(code, function_name):
     find_function_names(tree.root_node)
     function_names_tree = function_names
     function_names = []
-    print(function_names_tree)
+    #print(function_names_tree)
     for x in function_names_tree:
-        print("ArrayList:", x, "Function_Name:", function_name)
+        #print("ArrayList:", x, "Function_Name:", function_name)
     if function_name in function_names_tree:
         return True
     else:
@@ -250,11 +248,11 @@ def _gl_check(code, function_name):
 def find_function_names(node):
     #print("Searching for function names in tree...node", str(node.type))
     if str(node.type) == 'function_declarator' or str(node.type) == 'function_declaration':
-        print("Found function declarator")
+        #print("Found function declarator")
         for child in node.named_children:
-            print(str(child.type))
+            #print(str(child.type))
             if str(child.type) == 'identifier':
-                print(child.text.decode('utf-8'))
+                #print(child.text.decode('utf-8'))
                 function_names.append(child.text.decode('utf-8'))
     for child in node.named_children:
         find_function_names(child)
