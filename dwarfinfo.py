@@ -211,27 +211,24 @@ def tree_sitter_finding_bool(path, name):
     return ts_get_function(get_code(path), name)
 
 def ts_get_function(code, function_name):
-    if function_name == 'fseeko':
-        #print("tree sitter finding function:", function_name)
-        tree = parser.parse(code.encode(encoding='utf-8'))
-        #print_if(tree.root_node.__str__(), function_name)
-        #if CFunction(tree, function_name).function_node is not None:
-           # return CFunction(tree, function_name).function_node.text.decode('utf-8') == function_name
-        #else:
-            #print("tree sitter error:", function_name)
-            #return False
-        global function_names
+    #print("tree sitter finding function:", function_name)
+    tree = parser.parse(code.encode(encoding='utf-8'))
+    #print_if(tree.root_node.__str__(), function_name)
+    #if CFunction(tree, function_name).function_node is not None:
+       # return CFunction(tree, function_name).function_node.text.decode('utf-8') == function_name
+    #else:
+        #print("tree sitter error:", function_name)
+        #return False
+    global function_names
 
-        find_function_names(tree.root_node)
-        function_names_tree = function_names
-        function_names = []
-        print(function_names_tree)
-        for x in function_names_tree:
-            print("ArrayList:", x, "Function_Name:", function_name)
-        if function_name in function_names_tree:
-            return True
-        else:
-            return False
+    find_function_names(tree.root_node)
+    function_names_tree = function_names
+    function_names = []
+    print(function_names_tree)
+    for x in function_names_tree:
+        print("ArrayList:", x, "Function_Name:", function_name)
+    if function_name in function_names_tree:
+        return True
     else:
         return False
 
