@@ -5,6 +5,8 @@ from prettytable import PrettyTable
 from tree_sitter import Parser, Language
 import tree_sitter_c as ts_c
 
+function_names = []
+
 # tree-sitter global object
 C_LANGUAGE = Language(ts_c.language())
 parser = Parser(C_LANGUAGE)
@@ -218,8 +220,12 @@ def ts_get_function(code, function_name):
         #else:
             #print("tree sitter error:", function_name)
             #return False
+        global function_names
 
-        function_names_tree = (find_function_names(tree.root_node))
+        find_function_names(tree.root_node)
+        function_names_tree = function_names
+        function_names = []
+        print(function_names_tree)
         for x in function_names_tree:
             print("ArrayList:", x, "Function_Name:", function_name)
         if function_name in function_names_tree:
@@ -235,7 +241,6 @@ def get_code(path):
     return code
 
 def find_function_names(node):
-    function_names = []
     #print("Searching for function names in tree...node", str(node.type))
     if str(node.type) == 'function_declarator' or str(node.type) == 'function_declaration':
         print("Found function declarator")
