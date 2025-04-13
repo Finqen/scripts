@@ -236,9 +236,11 @@ def get_code(path):
 
 def find_function_names(node):
     function_names = []
-    print("Searching for function names in tree...node", str(node.type))
+    #print("Searching for function names in tree...node", str(node.type))
     if str(node.type) == 'function_declarator' or str(node.type) == 'function_declaration':
+        print("Found function declarator")
         for child in node.named_children:
+            print(str(child.type))
             if str(child.type) == 'identifier':
                 print(child.text)
                 function_names.append(child.text)
