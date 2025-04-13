@@ -204,14 +204,8 @@ def adjustement_for_fortify_functions(path, function_name):
             return True
     return False
 
-def check_for_fortify_function(line, function_name):
-    return 0
-
-def get_malloc_prefixes():
-    prefixes = ["rlp_"]
-    return tuple(prefixes)
-
 def tree_sitter_finding_bool(path, name):
+    print_if(path, name)
     return ts_get_function(get_code(path), name)
 
 def ts_get_function(code, function_name):
