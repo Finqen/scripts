@@ -230,7 +230,8 @@ def ts_get_function(code, function_name):
     if function_name in function_names_tree:
         return True
     else:
-
+        if _gl_check(code, function_name):
+            return True
         return False
 
 def get_code(path):
@@ -238,8 +239,7 @@ def get_code(path):
         code = file.read()
     return code
 
-def _gl_check(path, function_name):
-    code = get_code(path)
+def _gl_check(code, function_name):
     lines = code.splitlines()
     for i, line in enumerate(lines):
         if '_GL_ATTRIBUTE_PURE' in line:
