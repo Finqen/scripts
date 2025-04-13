@@ -22,7 +22,9 @@ FUNCTION_QUERY= """
 class CFunction:
     def __init__(self, tree, function_name):
         function_query = C_LANGUAGE.query(FUNCTION_QUERY.format(function_name=function_name))
+        print_if(function_query, function_name)
         function_captures = function_query.captures(tree.root_node)
+        print_if(function_captures, function_name)
 
         if function_captures:
             self.function_node = function_captures['function_names'][0]
@@ -248,7 +250,7 @@ def renaming(name):
     return name
 
 def print_if(string, name):
-    if name == "full_write":
+    if name == "fseeko":
         print(string)
 
 if __name__ == '__main__':
