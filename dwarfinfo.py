@@ -22,9 +22,9 @@ FUNCTION_QUERY= """
 class CFunction:
     def __init__(self, tree, function_name):
         function_query = C_LANGUAGE.query(FUNCTION_QUERY.format(function_name=function_name))
-        print_if(function_query, function_name)
+        print_if(function_query.__str__(), function_name)
         function_captures = function_query.captures(tree.root_node)
-        print_if(function_captures, function_name)
+        print_if(function_captures.__str__(), function_name)
 
         if function_captures:
             self.function_node = function_captures['function_names'][0]
