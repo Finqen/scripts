@@ -223,7 +223,7 @@ def ts_get_function(code, function_name):
     function_names_tree = function_names
     function_names = []
     #print(function_names_tree)
-    for x in function_names_tree:
+    #for x in function_names_tree:
         #print("ArrayList:", x, "Function_Name:", function_name)
     if function_name in function_names_tree:
         return True
