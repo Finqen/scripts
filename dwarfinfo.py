@@ -29,7 +29,7 @@ class CFunction:
         if function_captures:
             self.function_node = function_captures['function_names'][0]
         else:
-            print("Tree sitter CFunction error for:", function_name)
+            #print("Tree sitter CFunction error for:", function_name)
             self.function_node = None
 
 
@@ -217,12 +217,12 @@ def tree_sitter_finding_bool(path, name):
     return ts_get_function(get_code(path), name)
 
 def ts_get_function(code, function_name):
-    print("tree sitter finding function:", function_name)
+    #print("tree sitter finding function:", function_name)
     tree = parser.parse(code.encode(encoding='utf-8'))
     if CFunction(tree, function_name).function_node is not None:
         return CFunction(tree, function_name).function_node.text.decode('utf-8') == function_name
     else:
-        print("tree sitter error:", function_name)
+        #print("tree sitter error:", function_name)
         return False
 
 def get_code(path):
@@ -231,21 +231,21 @@ def get_code(path):
     return code
 
 def defines_extension(path, name):
-    print("defines_extension for: ",name," and ", path)
+    #print("defines_extension for: ",name," and ", path)
     code = get_code(path)
     for line in code.splitlines():
         match = re.match(r"#\s*define\s+(\S+)\s+" + name, line)
         if match:
-            print("New name: " + match.group(1).strip())
+            #print("New name: " + match.group(1).strip())
             return tree_sitter_finding_bool(path, match.group(1).strip())
     return tree_sitter_finding_bool(path, renaming(name))
 
 def renaming(name):
     prefixes = ["rpl_", "i_", "m_", "i", "m", "x"]
-    print("Checking for renaming:", name)
+    #print("Checking for renaming:", name)
     for prefix in prefixes:
         if name.startswith(prefix):
-            print("renaming:", name.replace(prefix, ""))
+            #print("renaming:", name.replace(prefix, ""))
             return name.replace(prefix, "")
     return name
 
