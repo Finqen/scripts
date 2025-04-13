@@ -242,7 +242,7 @@ def get_code(path):
 def _gl_check(code, function_name):
     lines = code.splitlines()
     for i, line in enumerate(lines):
-        if '_GL_ATTRIBUTE_PURE' in line:
+        if '_GL_' in line:
             if function_name in lines[i + 1]:
                 return True
     return False
