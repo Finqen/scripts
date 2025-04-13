@@ -240,6 +240,7 @@ def get_code(path):
 def find_function_names(node):
     function_names = []
     if node.type == 'function_declaration':
+        print("Found function declaration")
         for child in node.named_children:
             if child.type == 'identifier':
                 function_names.append(child.text)
