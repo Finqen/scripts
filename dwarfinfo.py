@@ -239,10 +239,11 @@ def get_code(path):
 
 def find_function_names(node):
     function_names = []
-    print("Searching for function names in tree...node.type", str(node.type))
-    if node.type == 'function_declaration':
+    print("Searching for function names in tree...node.type", str(node.text))
+    if str(node.type) == 'function_declaration':
         for child in node.named_children:
-            if child.type == 'identifier':
+            if str(child.type) == 'identifier':
+                print(child.text)
                 function_names.append(child.text)
     for child in node.named_children:
         find_function_names(child)
