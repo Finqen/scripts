@@ -22,9 +22,7 @@ FUNCTION_QUERY= """
 class CFunction:
     def __init__(self, tree, function_name):
         function_query = C_LANGUAGE.query(FUNCTION_QUERY.format(function_name=function_name))
-        print_if(function_query.__str__(), function_name)
         function_captures = function_query.captures(tree.root_node)
-        print_if(function_captures.__str__(), function_name)
 
         if function_captures:
             self.function_node = function_captures['function_names'][0]
@@ -219,17 +217,34 @@ def tree_sitter_finding_bool(path, name):
 def ts_get_function(code, function_name):
     #print("tree sitter finding function:", function_name)
     tree = parser.parse(code.encode(encoding='utf-8'))
-    print_if(tree.root_node.__str__(), function_name)
-    if CFunction(tree, function_name).function_node is not None:
-        return CFunction(tree, function_name).function_node.text.decode('utf-8') == function_name
-    else:
+    #print_if(tree.root_node.__str__(), function_name)
+    #if CFunction(tree, function_name).function_node is not None:
+       # return CFunction(tree, function_name).function_node.text.decode('utf-8') == function_name
+    #else:
         #print("tree sitter error:", function_name)
+        #return False
+    if find_function_names(tree.root_node).__contains__(function_name):
+        return True
+    else:
         return False
 
 def get_code(path):
     with open(path, 'r') as file:
         code = file.read()
     return code
+
+def find_function_names(node):
+    function_names = []
+    if node.type == 'function_declaration':
+        for child in node.named_children:
+            if child.type == 'identifier':
+                function_names.append(child.text)
+    for child in node.named_children:
+        find_function_names(child)
+
+    return function_names
+
+
 
 def defines_extension(path, name):
     #print("defines_extension for: ",name," and ", path)
