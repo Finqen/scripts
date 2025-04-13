@@ -221,7 +221,7 @@ def ts_get_function(code, function_name):
 
         function_names_tree = (find_function_names(tree.root_node))
         for x in function_names_tree:
-            print("ArrayList:", x)
+            print("ArrayList:", x, "Function_Name:", function_name)
         if function_name in function_names_tree:
             return True
         else:
