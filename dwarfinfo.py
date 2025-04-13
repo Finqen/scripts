@@ -80,8 +80,7 @@ def get_srcinfo(dwarf):
     return function_container
 
 def main(path, src_path):
-    program = path.rsplit('/')
-    print("Starting script for " + program[len(program)] + " ...")
+    print("Starting script for " + path + " ...")
     # check for DWARF information
     srcinfo = None
     with open(path, 'rb') as fo:
