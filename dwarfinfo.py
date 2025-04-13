@@ -223,7 +223,11 @@ def ts_get_function(code, function_name):
     #else:
         #print("tree sitter error:", function_name)
         #return False
-    if find_function_names(tree.root_node).__contains__(function_name):
+
+    function_names_tree = (find_function_names(tree.root_node))
+    for x in function_names_tree:
+        print(x)
+    if function_name in function_names_tree:
         return True
     else:
         return False
