@@ -230,12 +230,22 @@ def ts_get_function(code, function_name):
     if function_name in function_names_tree:
         return True
     else:
+
         return False
 
 def get_code(path):
     with open(path, 'r') as file:
         code = file.read()
     return code
+
+def _gl_check(path, function_name):
+    code = get_code(path)
+    lines = code.splitlines()
+    for i, line in enumerate(lines):
+        if '_GL_ATTRIBUTE_PURE' in line:
+            if function_name in lines[i + 1]:
+                return True
+    return False
 
 def find_function_names(node):
     #print("Searching for function names in tree...node", str(node.type))
