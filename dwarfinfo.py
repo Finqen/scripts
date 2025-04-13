@@ -117,16 +117,16 @@ def pretty_print(srcinfo, src_path):
         if row.verification is False:
             table.add_row([row.name, row.line, row.path, row.verification_reason])
         '''
-        if not(row.path.startswith('/usr/include')):
-            if tree_sitter_finding_bool(src_path + row.path, row.name):
+        if tree_sitter_finding_bool(src_path + row.path, row.name):
+            verifications += 1
+        else:
+            if defines_extension(src_path + row.path, row.name):
                 verifications += 1
             else:
-                if defines_extension(src_path + row.path, row.name):
-                    verifications += 1
-                else:
-                    table.add_row([row.name, row.line, row.path, ''])
-        else:
-            print(row.path)
+                print(row.name, row.line, row.path)
+            table.add_row([row.name, row.line, row.path, ''])
+    else:
+        print(row.path)
 
     print(table)
     print_metrics((verifications / count_functions) if verifications > 0 else 0, count_functions, count_functions-verifications)
