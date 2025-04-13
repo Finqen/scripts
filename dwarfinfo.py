@@ -117,14 +117,19 @@ def pretty_print(srcinfo, src_path):
         if row.verification is False:
             table.add_row([row.name, row.line, row.path, row.verification_reason])
         '''
-        if tree_sitter_finding_bool(src_path + row.path, row.name):
-            verifications += 1
+        if 'usr/include' in row.path:
+            print('--------------------------')
+            print(row.path, row.line, row.name)
+            print('--------------------------')
         else:
-            if defines_extension(src_path + row.path, row.name):
+            if tree_sitter_finding_bool(src_path + row.path, row.name):
                 verifications += 1
             else:
-                print(row.name, row.line, row.path)
-            table.add_row([row.name, row.line, row.path, ''])
+                if defines_extension(src_path + row.path, row.name):
+                    verifications += 1
+                else:
+                    print(row.name, row.line, row.path)
+                table.add_row([row.name, row.line, row.path, ''])
 
     print(table)
     print_metrics((verifications / count_functions) if verifications > 0 else 0, count_functions, count_functions-verifications)
@@ -141,6 +146,7 @@ def print_metrics(ver_score, count_functions, fails):
 def to_percentage_string(percentage_float):
     return str(percentage_float * 100)[0:5] + " %"
 
+@DeprecationWarning
 def traverse_for_function(row):
     path = row.path
     function_name = row.name
