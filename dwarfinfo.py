@@ -104,6 +104,8 @@ def pretty_print(srcinfo, src_path):
     count_functions = 0
     verifications = 0
 
+    functions_list = []
+
 
 
 
@@ -130,13 +132,17 @@ def pretty_print(srcinfo, src_path):
             print('--------------------------')
         else:
             if tree_sitter_finding_bool(combined_path, row.name):
+                functions_list.append(row.name)
                 verifications += 1
             else:
                 if defines_extension(combined_path, row.name):
+                    functions_list.append(row.name)
                     verifications += 1
                 else:
                     table.add_row([row.name, row.line, row.path, ''])
 
+
+    print(sorted(functions_list))
     print(table)
     print_metrics((verifications / count_functions) if verifications > 0 else 0, count_functions, count_functions-verifications)
 
