@@ -66,6 +66,7 @@ def get_srcinfo_db(path):
             function_container.append(DwarfFunctionInfo(row[0], row[1], row[2], row[3]))
 
     conn.close()
+    return function_container
 
 def get_srcinfo(dwarf):
     function_container = []
