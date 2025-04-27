@@ -65,7 +65,7 @@ def get_srcinfo_db(path):
         for row in rows:
             print(row[0][0], row[1], row[3])
             if row[1] != None:
-                function_container.append(DwarfFunctionInfo(row[0], row[1], row[2], row[3]))
+                function_container.append(DwarfFunctionInfo(row[0][0], row[1], row[2], row[3]))
 
     conn.close()
     return function_container
