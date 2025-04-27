@@ -1,0 +1,84 @@
+diff --git a/Makefile.am b/Makefile.am
+index 1e372de..ded695a 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -3,7 +3,7 @@ include $(top_srcdir)/Makefile.decl
+ 
+ AUTOMAKE_OPTIONS = 1.7
+ 
+-SUBDIRS = . m4macros glib gmodule gthread gobject gio tests po
++SUBDIRS = . m4macros glib gmodule gthread gobject gio po
+ DIST_SUBDIRS = $(SUBDIRS) build
+ 
+ bin_SCRIPTS = glib-gettextize
+diff --git a/configure.in b/configure.in
+index 0cfe0a9..342a49f 100644
+--- a/configure.in
++++ b/configure.in
+@@ -3343,12 +3343,10 @@ glib/libcharset/Makefile
+ glib/gnulib/Makefile
+ glib/pcre/Makefile
+ glib/update-pcre/Makefile
+-glib/tests/Makefile
+ gmodule/Makefile
+ gmodule/gmoduleconf.h
+ gobject/Makefile
+ gobject/glib-mkenums
+-gobject/tests/Makefile
+ gthread/Makefile
+ gio/Makefile
+ gio/xdgmime/Makefile
+@@ -3356,11 +3354,7 @@ gio/inotify/Makefile
+ gio/fen/Makefile
+ gio/fam/Makefile
+ gio/win32/Makefile
+-gio/tests/Makefile
+ po/Makefile.in
+-tests/Makefile
+-tests/gobject/Makefile
+-tests/refcount/Makefile
+ m4macros/Makefile
+ ])
+ 
+diff --git a/gio/Makefile.am b/gio/Makefile.am
+index be6568f..38cbaf2 100644
+--- a/gio/Makefile.am
++++ b/gio/Makefile.am
+@@ -162,7 +162,7 @@ win32_sources = \
+ 
+ endif
+ 
+-SUBDIRS += tests
++SUBDIRS += 
+ 
+ libgio_2_0_la_SOURCES =		\
+ 	gappinfo.c 		\
+diff --git a/glib/Makefile.am b/glib/Makefile.am
+index c6f20bb..9746109 100644
+--- a/glib/Makefile.am
++++ b/glib/Makefile.am
+@@ -19,9 +19,9 @@ gregex_c =
+ gregex_h =
+ endif
+ 
+-SUBDIRS = libcharset $(PRINTF_SUBDIR) $(MAYBE_PCRE) update-pcre . tests
++SUBDIRS = libcharset $(PRINTF_SUBDIR) $(MAYBE_PCRE) update-pcre .
+ 
+-DIST_SUBDIRS = libcharset gnulib pcre update-pcre tests
++DIST_SUBDIRS = libcharset gnulib pcre update-pcre
+ 
+ AM_CPPFLAGS = 				\
+ 	-I$(top_srcdir) 		\
+diff --git a/gobject/Makefile.am b/gobject/Makefile.am
+index f8a7de4..fc36a70 100644
+--- a/gobject/Makefile.am
++++ b/gobject/Makefile.am
+@@ -4,7 +4,7 @@
+ ## Process this file with automake to produce Makefile.in
+ include $(top_srcdir)/Makefile.decl
+ 
+-SUBDIRS = . tests
++SUBDIRS = . 
+ 
+ AM_CPPFLAGS = 					\
+ 	-DG_LOG_DOMAIN=\"GLib-GObject\"		\

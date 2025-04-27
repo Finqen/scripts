@@ -1,0 +1,32 @@
+glib2.0 (2.23.1-2) zelazny; urgency=low
+
+  * Fix sections of host/tools packages.
+
+ -- Mikhail Gusarov <dottedmag@dottedmag.net>  Sat, 16 Jan 2010 17:55:43 +0600
+
+glib2.0 (2.23.1-1) zelazny; urgency=low
+
+  * New upstream release.
+  * Fix broken configure answers which prevented any module from loading
+  * Rename libglib2.0 to libglib2.0-0
+
+ -- Mikhail Gusarov <dottedmag@dottedmag.net>  Sat, 16 Jan 2010 14:51:15 +0600
+
+glib2.0 (2.20.0-20090316-2) asimov; urgency=low
+
+  * Remove libglib2.0-data package.
+  * Clean up obsolete Conflicts/Provdes.
+
+ -- Mikhail Gusarov <dottedmag@dottedmag.net>  Sun, 12 Jul 2009 17:10:41 +0700
+
+glib2.0 (2.20.0-20090316-1+b1) asimov; urgency=low
+
+  * Rebuild with new toolchain.
+
+ -- Alexander Kerner <lunohod@openinkpot.org>  Fri, 03 Apr 2009 16:36:54 +0200
+
+glib2.0 (2.20.0-20090316-1) asimov; urgency=low
+
+  * First build for IPlinux
+
+ -- Alexander Kerner <lunohod@openinkpot.org>  Mon, 16 Mar 2009 15:16:37 +0000
