@@ -8,6 +8,7 @@ import psycopg
 import clang.cindex
 
 function_names = []
+LIBPATH = None
 
 
 def find_macro_chain(filename, target_name, include_dirs=None):
@@ -144,8 +145,12 @@ def get_srcinfo(dwarf):
     return function_container
 
 def main(path, src_path, db, lib_path):
+
     # lib path
+    # like ("/usr/lib/llvm-VERSION/lib/libclang.so")
     if lib_path is not None:
+        global LIBPATH
+        LIBPATH = lib_path
         clang.cindex.Config.set_library_file(lib_path)
 
     print("Starting script for " + path + " ...")
@@ -322,8 +327,10 @@ def defines_extension(path, name):
         if match:
             #print("New name: " + match.group(1).strip())
             return tree_sitter_finding_bool(path, match.group(1).strip())
-    # return tree_sitter_finding_bool(path, renaming(name))
-    return renaming_preprocessor(path, name)
+    if LIBPATH is None:
+        return tree_sitter_finding_bool(path, renaming(name))
+    else:
+        return renaming_preprocessor(path, name)
 
 def renaming(name):
     prefixes = ["rpl_", "i_", "m_", "i", "m", "x"]
