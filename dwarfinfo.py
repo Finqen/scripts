@@ -10,7 +10,7 @@ import clang.cindex
 function_names = []
 
 
-def find_macro_chain(filename, target_name, lib_path, include_dirs=None):
+def find_macro_chain(filename, target_name, include_dirs=None):
 
     if include_dirs is None:
         include_dirs = []
