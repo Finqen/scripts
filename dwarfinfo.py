@@ -4,6 +4,7 @@ from elftools.elf.elffile import ELFFile
 from prettytable import PrettyTable
 from tree_sitter import Parser, Language
 import tree_sitter_c as ts_c
+import psycopg
 
 function_names = []
 
@@ -41,6 +42,30 @@ class DwarfFunctionInfo:
         self.offset = offset
         self.verification = False
         self.verification_reason = None
+
+def get_srcinfo_db(path):
+    # DB Conn
+    conn = psycopg.connect(
+        dbname="arcsrc",
+        user="rouser",
+        password="",
+        host="kuria",
+        port="5432"
+    )
+
+    query = """SELECT name, srcabspath, srcline, vaddr
+               FROM binary_functions
+               WHERE binary_id = (SELECT binary_id
+                   FROM binaries
+               WHERE pkg like '%coreutil%' and compileopt = '00000' and relpath = {path});""".format(path=path)
+    function_container = []
+    with conn.cursor() as cur:
+        cur.execute(query)
+        rows = cur.fetchall()
+        for row in rows:
+            function_container.append(DwarfFunctionInfo(row[0], row[1], row[2], row[3]))
+
+    conn.close()
 
 def get_srcinfo(dwarf):
     function_container = []
@@ -81,15 +106,18 @@ def get_srcinfo(dwarf):
             continue
     return function_container
 
-def main(path, src_path):
+def main(path, src_path, db):
     print("Starting script for " + path + " ...")
     # check for DWARF information
     srcinfo = None
-    with open(path, 'rb') as fo:
-        elffile = ELFFile(fo)
-        if elffile.has_dwarf_info():
-            dwarfinfo = elffile.get_dwarf_info()
-            srcinfo = get_srcinfo(dwarfinfo)
+    if db:
+        srcinfo = get_srcinfo_db(path)
+    else:
+        with open(path, 'rb') as fo:
+            elffile = ELFFile(fo)
+            if elffile.has_dwarf_info():
+                dwarfinfo = elffile.get_dwarf_info()
+                srcinfo = get_srcinfo(dwarfinfo)
     pretty_print(srcinfo, src_path)
 
 
@@ -126,20 +154,18 @@ def pretty_print(srcinfo, src_path):
         if row.verification is False:
             table.add_row([row.name, row.line, row.path, row.verification_reason])
         '''
-        if 'usr/include' in row.path:
-            print('--------------------------')
-            print(row.path, row.line, row.name)
-            print('--------------------------')
+        if '/usr/include' in row.path:
+            row.path = row.path.replace('/usr/include', './include')
+
+        if tree_sitter_finding_bool(combined_path, row.name):
+            functions_list.append(row.name)
+            verifications += 1
         else:
-            if tree_sitter_finding_bool(combined_path, row.name):
+            if defines_extension(combined_path, row.name):
                 functions_list.append(row.name)
                 verifications += 1
             else:
-                if defines_extension(combined_path, row.name):
-                    functions_list.append(row.name)
-                    verifications += 1
-                else:
-                    table.add_row([row.name, row.line, row.path, ''])
+                table.add_row([row.name, row.line, row.path, ''])
 
 
     print(sorted(functions_list))
@@ -157,38 +183,6 @@ def print_metrics(ver_score, count_functions, fails):
 
 def to_percentage_string(percentage_float):
     return str(percentage_float * 100)[0:5] + " %"
-
-@DeprecationWarning
-def traverse_for_function(row):
-    path = row.path
-    function_name = row.name
-    line = row.line
-
-    # Guards for special cases
-    # .h Class
-    if path.endswith(".h"):
-        if not adjustement_for_fortify_functions(path, function_name):
-            return  "h. File - Prototype function"
-    # rlp_ function
-    if function_name.startswith(get_malloc_prefixes()):
-        function_name = function_name.split("_")[1]
-    source_file = open(path)
-    for i, source_file_line in enumerate(source_file, 1):
-        if i == line:
-            next_line = source_file.readlines()[0]
-            if check_if_really_a_function(function_name, source_file_line):
-                source_file.close()
-                return None
-            # readlines okay here, because we want to stop iterating after
-            elif check_if_really_a_function_next_line(function_name, source_file_line, next_line):
-                source_file.close()
-                return None
-            elif check_if_really_a_function_next_lines(function_name, source_file_line, next_line, source_file.readlines()):
-                source_file.close()
-                return None
-            break
-    source_file.close()
-    return "Not a function!"
 
 def check_if_really_a_function(function_name, line):
     return bool(re.search(function_name + r'\s*\(.*\)*\{', line))
@@ -214,7 +208,7 @@ def check_if_really_a_function_next_lines(function_name, line, next_line, rest_o
                     continue
                 return False
 
-def adjustement_for_fortify_functions(path, function_name):
+def adjustment_for_fortify_functions(path, function_name):
     source_file = open(path)
     for i, source_file_line in enumerate(source_file):
         if '__fortify_function' in source_file_line:
@@ -302,5 +296,7 @@ def print_if(string, name):
     if name == "fseeko":
         print(string)
 
+
+
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2])
+    main(sys.argv[1], sys.argv[2], sys.argv[3])
