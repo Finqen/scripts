@@ -46,7 +46,7 @@ class DwarfFunctionInfo:
 def get_srcinfo_db(path):
     # DB Conn
     conn = psycopg.connect(
-        dbname="arcsrc",
+        dbname="archsrc",
         user="rouser",
         password="",
         host="kuria",
