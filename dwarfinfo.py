@@ -57,7 +57,7 @@ def get_srcinfo_db(path):
                FROM binary_functions
                WHERE binary_id = (SELECT binary_id
                    FROM binaries
-               WHERE pkg like '%coreutil%' and compileopt = '00000' and relpath = {path});""".format(path=path)
+               WHERE pkg like '%coreutil%' and compileopt = '00000' and relpath = '{path}');""".format(path=path)
     function_container = []
     with conn.cursor() as cur:
         cur.execute(query)
