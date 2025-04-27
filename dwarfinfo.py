@@ -5,8 +5,42 @@ from prettytable import PrettyTable
 from tree_sitter import Parser, Language
 import tree_sitter_c as ts_c
 import psycopg
+import clang.cindex
 
 function_names = []
+
+
+def find_macro_chain(filename, target_name, lib_path, include_dirs=None):
+
+    if include_dirs is None:
+        include_dirs = []
+
+    args = [f"-I{inc}" for inc in include_dirs]
+    index = clang.cindex.Index.create()
+    tu = index.parse(filename, args=args)
+
+    # check for defines
+    macro_map = {}
+    for cursor in tu.cursor.walk_preorder():
+        if cursor.kind == clang.cindex.CursorKind.MACRO_DEFINITION:
+            tokens = list(cursor.get_tokens())
+            if len(tokens) >= 3:
+                name = tokens[1].spelling
+                replacement = " ".join(tok.spelling for tok in tokens[2:])
+                macro_map[name] = replacement
+
+    # recursive alias find
+    result = []
+
+    def resolve_aliases(name):
+        for alias, real in macro_map.items():
+            if real == name and alias not in result:
+                result.append(alias)
+                resolve_aliases(alias)
+
+    resolve_aliases(target_name)
+    return result
+
 
 # tree-sitter global object
 C_LANGUAGE = Language(ts_c.language())
@@ -109,7 +143,11 @@ def get_srcinfo(dwarf):
             continue
     return function_container
 
-def main(path, src_path, db):
+def main(path, src_path, db, lib_path):
+    # lib path
+    if lib_path is not None:
+        clang.cindex.Config.set_library_file(lib_path)
+
     print("Starting script for " + path + " ...")
     # check for DWARF information
     srcinfo = None
@@ -158,7 +196,7 @@ def pretty_print(srcinfo, src_path):
             table.add_row([row.name, row.line, row.path, row.verification_reason])
         '''
         if '/usr/include' in row.path:
-            row.path = row.path.replace('/usr/include', './include')
+            row.path = row.path.replace('/usr/include', '~/scripts/include')
 
         if tree_sitter_finding_bool(combined_path, row.name):
             functions_list.append(row.name)
@@ -284,7 +322,8 @@ def defines_extension(path, name):
         if match:
             #print("New name: " + match.group(1).strip())
             return tree_sitter_finding_bool(path, match.group(1).strip())
-    return tree_sitter_finding_bool(path, renaming(name))
+    # return tree_sitter_finding_bool(path, renaming(name))
+    return renaming(path, name)
 
 def renaming(name):
     prefixes = ["rpl_", "i_", "m_", "i", "m", "x"]
@@ -295,6 +334,16 @@ def renaming(name):
             return name.replace(prefix, "")
     return name
 
+def renaming_preprocessor(path, name):
+    includes = ["~/scripts/include", "lib/*"]
+    aliases = find_macro_chain(path, name, includes)
+    for alias in aliases:
+        if tree_sitter_finding_bool(path, alias):
+            return True
+    else:
+        return False
+
+
 def print_if(string, name):
     if name == "fseeko":
         print(string)
@@ -302,4 +351,4 @@ def print_if(string, name):
 
 
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2], sys.argv[3])
+    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
