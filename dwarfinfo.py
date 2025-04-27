@@ -323,7 +323,7 @@ def defines_extension(path, name):
             #print("New name: " + match.group(1).strip())
             return tree_sitter_finding_bool(path, match.group(1).strip())
     # return tree_sitter_finding_bool(path, renaming(name))
-    return renaming(path, name)
+    return renaming_preprocessor(path, name)
 
 def renaming(name):
     prefixes = ["rpl_", "i_", "m_", "i", "m", "x"]
