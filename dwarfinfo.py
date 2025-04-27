@@ -148,7 +148,7 @@ def main(path, src_path, db, lib_path):
 
     # lib path
     # like ("/usr/lib/llvm-VERSION/lib/libclang.so")
-    if lib_path is not None:
+    if lib_path != "":
         global LIBPATH
         LIBPATH = lib_path
         clang.cindex.Config.set_library_file(lib_path)
