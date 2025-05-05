@@ -19,7 +19,8 @@ def get_package_info_db():
 
     query = """SELECT b.pkg, b.abspath, f.srcabspath
                FROM binaries b JOIN binary_functions f on b.binary_id = f.binary_id
-               WHERE b.compileopt = '00000' and f.srcabspath like '/usr%';"""
+               WHERE b.compileopt = '00000' and f.srcabspath like '/usr%'
+               ORDER BY b.pkg LIMIT 100;"""
     packackge_container = []
     with conn.cursor() as cur:
         cur.execute(query)
