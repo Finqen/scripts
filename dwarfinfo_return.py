@@ -214,10 +214,8 @@ def pretty_print(srcinfo, src_path):
             if defines_extension(src_path, row.name):
                 functions_list.append(row.name)
                 verifications += 1
-            else:
-                table.add_row([row.name, row.line, row.path, ''])
 
-    return Metrics(count_functions, verifications)
+    return [count_functions, verifications]
 
     
 def print_metrics(ver_score, count_functions, fails):
