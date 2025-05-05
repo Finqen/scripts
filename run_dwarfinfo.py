@@ -41,7 +41,7 @@ def main():
     metrics = []
     for package in packages:
         metric = dwarfinfo_return.main(package[1], package[2], True, "")
-        print(package[1], package[2])
+        print("Started with bin_path:",package[1],"\nsrc_path:",package[2])
         metrics.append([package[0], metric[0], metric[1]])
 
     with open(filename, 'w', newline='') as csvfile:
