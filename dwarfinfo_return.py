@@ -84,6 +84,15 @@ class DwarfFunctionInfo:
         self.verification = False
         self.verification_reason = None
 
+def find_file(abspath, partial_path):
+    for foldername, subfolders, filenames in os.walk(abspath):
+        for filename in filenames:
+            full_path = os.path.join(foldername, filename)
+            if full_path.endswith(partial_path):
+                return full_path
+
+    return None
+
 def get_srcinfo_db(pkg, abspath):
     # DB Conn
     conn = psycopg.connect(
@@ -107,15 +116,15 @@ def get_srcinfo_db(pkg, abspath):
         #print(query)
         for row in rows:
             if row[1] != None:
+                srcabspath = row[1]
                 if row[1].startswith("/usr"):
                     srcabspath = abspath.split("/usr/")[0] + row[1]
-                    function_container.append(DwarfFunctionInfo(row[0][0], srcabspath, row[2], row[3]))
                 elif row[1].startswith("../"):
-                    srcabspath = abspath.split("/bin/")[0] + row[1].replace("../", "/src/debug/" + pkg.split("-")[0] + "/")
-                    print("../ srcabspath: {}".format(srcabspath))
-                    function_container.append(DwarfFunctionInfo(row[0][0], srcabspath, row[2], row[3]))
-                else:
-                    function_container.append(DwarfFunctionInfo(row[0][0], row[1], row[2], row[3]))
+                    srcabspath = find_file(abspath.split("/usr/")[0], row[1].replace("../"))
+                elif row[1].startswith("./../"):
+                    srcabspath = find_file(abspath.split("/usr/")[0], row[1].replace("./../"))
+
+                function_container.append(DwarfFunctionInfo(row[0][0], srcabspath, row[2], row[3]))
 
     conn.close()
     return function_container
