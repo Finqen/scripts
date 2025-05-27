@@ -96,7 +96,7 @@ def get_srcinfo_db(pkg, abspath):
 
     query = """SELECT name, srcabspath, srcline, vaddr
                FROM binary_functions
-               WHERE binary_id = (SELECT binary_id
+               WHERE binary_id IN (SELECT binary_id
                    FROM binaries
                WHERE compileopt = '00000' and pkg = '{pkg}');""".format(pkg=pkg)
     function_container = []

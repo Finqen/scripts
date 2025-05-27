@@ -26,7 +26,6 @@ def get_package_info_db():
         rows = cur.fetchall()
         for row in rows:
             packackge_container.append([row[0], row[1]])
-
     conn.close()
     return packackge_container
 
