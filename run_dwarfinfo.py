@@ -20,7 +20,7 @@ def get_package_info_db():
     query = """SELECT b.pkg, b.abspath, f.srcabspath
                FROM binaries b JOIN binary_functions f on b.binary_id = f.binary_id
                WHERE b.compileopt = '00000' and f.srcabspath like '/usr%'
-               ORDER BY b.pkg LIMIT 100;"""
+               ORDER BY b.pkg LIMIT 1;"""
     packackge_container = []
     with conn.cursor() as cur:
         cur.execute(query)
@@ -36,7 +36,7 @@ def get_package_info_db():
 def contains_c_files(srcpath):
     for foldername, subfolders, filenames in os.walk(srcpath):
         for filename in filenames:
-            # Überprüfe, ob die Dateiendung übereinstimmt
+            print("Filename: "+filename)
             if filename.endswith('.c') or filename.endswith('.h'):
                 return True
 
