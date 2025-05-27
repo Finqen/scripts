@@ -216,6 +216,8 @@ def pretty_print(srcinfo):
         if row.verification is False:
             table.add_row([row.name, row.line, row.path, row.verification_reason])
         '''
+        if row.path is None:
+            continue
         if row.path.startswith("../"):
             row.path = row.path.replace("..", "")
         if '/usr/include' in row.path:
