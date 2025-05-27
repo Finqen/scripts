@@ -120,9 +120,9 @@ def get_srcinfo_db(pkg, abspath):
                 if row[1].startswith("/usr"):
                     srcabspath = abspath.split("/usr/")[0] + row[1]
                 elif row[1].startswith("../"):
-                    srcabspath = find_file(abspath.split("/usr/")[0], row[1].replace("../"))
+                    srcabspath = find_file(abspath.split("/usr/")[0], row[1].replace("../", ""))
                 elif row[1].startswith("./../"):
-                    srcabspath = find_file(abspath.split("/usr/")[0], row[1].replace("./../"))
+                    srcabspath = find_file(abspath.split("/usr/")[0], row[1].replace("./../", ""))
 
                 function_container.append(DwarfFunctionInfo(row[0][0], srcabspath, row[2], row[3]))
 
