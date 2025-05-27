@@ -276,7 +276,10 @@ def adjustment_for_fortify_functions(path, function_name):
 
 def tree_sitter_finding_bool(path, name):
     #print_if(path, name)
-    return ts_get_function(get_code(path), name)
+    code = get_code(path)
+    if code is None:
+        return False
+    return ts_get_function(code, name)
 
 def ts_get_function(code, function_name):
     #print("tree sitter finding function:", function_name)
@@ -303,10 +306,14 @@ def ts_get_function(code, function_name):
         return False
 
 def get_code(path):
-    print("Path: " + path)
-    with open(path, 'r') as file:
-        code = file.read()
-    return code
+    try:
+        with open(path, 'r') as file:
+            code = file.read()
+        return code
+    except:
+        print("Path: " + path)
+        return None
+
 
 def _gl_check(code, function_name):
     lines = code.splitlines()
@@ -335,6 +342,8 @@ def find_function_names(node):
 def defines_extension(path, name):
     #print("defines_extension for: ",name," and ", path)
     code = get_code(path)
+    if code is None:
+        return False
     for line in code.splitlines():
         match = re.match(r"#\s*define\s+(\S+)\s+" + name, line)
         if match:
