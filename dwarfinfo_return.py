@@ -109,7 +109,10 @@ def get_srcinfo_db(pkg, abspath):
             if row[1] != None:
                 if row[1].startswith("/usr"):
                     srcabspath = abspath.split("/usr/")[0] + row[1]
-                    print(srcabspath)
+                    function_container.append(DwarfFunctionInfo(row[0][0], srcabspath, row[2], row[3]))
+                elif row[1].startswith("../"):
+                    srcabspath = abspath.split(row[1].replace("../", ""))[0] + row[1].replace("../", "")
+                    print("../ srcabspath: {}".format(srcabspath))
                     function_container.append(DwarfFunctionInfo(row[0][0], srcabspath, row[2], row[3]))
                 else:
                     function_container.append(DwarfFunctionInfo(row[0][0], row[1], row[2], row[3]))
@@ -204,6 +207,8 @@ def pretty_print(srcinfo):
         if row.verification is False:
             table.add_row([row.name, row.line, row.path, row.verification_reason])
         '''
+        if row.path.startswith("../"):
+            row.path = row.path.replace("..", "")
         if '/usr/include' in row.path:
             row.path = row.path.replace('/usr/include', '~/scripts/include')
 
