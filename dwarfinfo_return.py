@@ -84,7 +84,7 @@ class DwarfFunctionInfo:
         self.verification = False
         self.verification_reason = None
 
-def get_srcinfo_db(path):
+def get_srcinfo_db(pkg):
     # DB Conn
     conn = psycopg.connect(
         dbname="archsrc",
@@ -98,7 +98,7 @@ def get_srcinfo_db(path):
                FROM binary_functions
                WHERE binary_id = (SELECT binary_id
                    FROM binaries
-               WHERE compileopt = '00000' and relpath = 'usr/{path}');""".format(path=path)
+               WHERE compileopt = '00000' and pkg = '{pkg}');""".format(path=path)
     function_container = []
     with conn.cursor() as cur:
         cur.execute(query)
@@ -152,7 +152,7 @@ def get_srcinfo(dwarf):
             continue
     return function_container
 
-def main(path, db, lib_path):
+def main(pkg, db, lib_path):
 
     # lib path
     # like ("/usr/lib/llvm-VERSION/lib/libclang.so")
@@ -161,13 +161,13 @@ def main(path, db, lib_path):
         LIBPATH = lib_path
         clang.cindex.Config.set_library_file(lib_path)
 
-    print("Starting script for " + path + " ...")
+    print("Starting script for " + pkg + " ...")
     # check for DWARF information
     srcinfo = None
     if db:
-        srcinfo = get_srcinfo_db(path)
+        srcinfo = get_srcinfo_db(pkg)
     else:
-        with open(path, 'rb') as fo:
+        with open(pkg, 'rb') as fo:
             elffile = ELFFile(fo)
             if elffile.has_dwarf_info():
                 dwarfinfo = elffile.get_dwarf_info()

@@ -46,7 +46,7 @@ def main():
     metrics = []
     for package in packages:
         if contains_c_files(package[1].split("/bin/")[0]):
-            metric = dwarfinfo_return.main(package[1], True, "")
+            metric = dwarfinfo_return.main(package[0], True, "")
             metrics.append([package[1].split("/bin/")[1], package[1], metric[0], metric[1]])
         else:
             metrics.append([package[1].split("/bin/")[1], package[1], '', "No source files"])
