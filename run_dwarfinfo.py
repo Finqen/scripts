@@ -50,6 +50,7 @@ def main():
     metrics = []
     for package in packages:
         print("\nbin_path:", package[1], "\nsrc_path:", package[2])
+        print(package[1].split("/bin")[0])
         if contains_c_files(package[1].split("/bin")[0]):
             metric = dwarfinfo_return.main(package[1], package[2], True, "")
             metrics.append([package[1], metric[0], metric[1]])
