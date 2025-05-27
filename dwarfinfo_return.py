@@ -103,6 +103,7 @@ def get_srcinfo_db(path):
     with conn.cursor() as cur:
         cur.execute(query)
         rows = cur.fetchall()
+        print("Found {} functions".format(len(rows)))
         for row in rows:
             print(row[0][0], row[1], row[3])
             if row[1] != None:
