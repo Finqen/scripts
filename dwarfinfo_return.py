@@ -203,7 +203,7 @@ def pretty_print(srcinfo):
         if '/usr/include' in row.path:
             row.path = row.path.replace('/usr/include', '~/scripts/include')
 
-        if tree_sitter_finding_bool(row, row.name):
+        if tree_sitter_finding_bool(row.path, row.name):
             functions_list.append(row.name)
             verifications += 1
         else:
