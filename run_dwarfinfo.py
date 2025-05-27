@@ -23,7 +23,7 @@ def get_package_info_db():
 
     query = """SELECT b.pkg, b.abspath
                FROM binaries b
-               WHERE b.compileopt = '00000'
+               WHERE b.compileopt = '00000' AND AND b.pkg NOT LIKE 'aarch64-linux-gnu-binutils%'
                ORDER BY b.pkg;"""
     packackge_container = []
     with conn.cursor() as cur:
