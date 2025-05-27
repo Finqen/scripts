@@ -106,7 +106,7 @@ def get_srcinfo_db(pkg):
         print("Found {} functions".format(len(rows)))
         print(query)
         for row in rows:
-            print(row[0][0], row[1], row[3])
+            #print(row[0][0], row[1], row[3])
             if row[1] != None:
                 function_container.append(DwarfFunctionInfo(row[0][0], row[1], row[2], row[3]))
 
@@ -182,15 +182,9 @@ def determine_compiler():
 
 def pretty_print(srcinfo):
 
-
-
     count_functions = 0
     verifications = 0
-
     functions_list = []
-
-
-
 
     for row in srcinfo:
 
@@ -291,6 +285,7 @@ def ts_get_function(code, function_name):
         return False
 
 def get_code(path):
+    print("Path: " + path)
     with open(path, 'r') as file:
         code = file.read()
     return code
