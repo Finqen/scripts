@@ -104,11 +104,12 @@ def get_srcinfo_db(pkg, abspath):
         cur.execute(query)
         rows = cur.fetchall()
         print("Found {} functions".format(len(rows)))
-        print(query)
+        #print(query)
         for row in rows:
             if row[1] != None:
                 if row[1].startswith("/usr"):
-                    row[1] = abspath.split("/usr/")[0] + row[1].replace("/usr", "")
+                    srcabspath = abspath.split("/usr/")[0] + row[1].replace("/usr", "")
+                    function_container.append(DwarfFunctionInfo(row[0][0], srcabspath, row[2], row[3]))
                 function_container.append(DwarfFunctionInfo(row[0][0], row[1], row[2], row[3]))
 
     conn.close()
