@@ -1,5 +1,5 @@
-/* Define struct iovec.
-   Copyright (C) 1996-2025 Free Software Foundation, Inc.
+/* Define stack_t.
+   Copyright (C) 1998-2025 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,17 +16,18 @@
    License along with the GNU C Library; if not, see
    <https://www.gnu.org/licenses/>.  */
 
-#ifndef __iovec_defined
-#define __iovec_defined 1
+#ifndef __stack_t_defined
+#define __stack_t_defined 1
 
 #define __need_size_t
 #include <stddef.h>
 
-/* Structure for scatter/gather I/O.  */
-struct iovec
+/* Structure describing a signal stack.  */
+typedef struct
   {
-    void *iov_base;	/* Pointer to data.  */
-    size_t iov_len;	/* Length of data.  */
-  };
+    void *ss_sp;
+    size_t ss_size;
+    int ss_flags;
+  } stack_t;
 
 #endif
