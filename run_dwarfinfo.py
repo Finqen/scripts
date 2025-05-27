@@ -21,7 +21,7 @@ def get_package_info_db():
         port="5432"
     )
 
-    query = """SELECT b.pkg, b.abspath
+    query = """SELECT b.pkg, b.abspath, b.binary_id
                FROM binaries b
                WHERE b.compileopt = '00000' AND b.pkg NOT LIKE 'aarch64-linux-gnu-%'
                ORDER BY b.pkg;"""
@@ -30,7 +30,7 @@ def get_package_info_db():
         cur.execute(query)
         rows = cur.fetchall()
         for row in rows:
-            packackge_container.append([row[0], row[1]])
+            packackge_container.append([row[0], row[1], row[2]])
     conn.close()
     return packackge_container
 
@@ -51,13 +51,13 @@ def main():
     for package in packages:
         if contains_c_files(package[1].split("/bin/")[0]):
             metric = dwarfinfo_return.main(package[0], package[1], True, "")
-            metrics.append([beautify_pkg_name(package[1]), package[1], metric[0], metric[1]])
+            metrics.append([beautify_pkg_name(package[1]), package[1], metric[0], metric[1], package[2]])
         else:
-            metrics.append([beautify_pkg_name(package[1]), package[1], '', "No source files"])
+            metrics.append([beautify_pkg_name(package[1]), package[1], '', "No source files", package[2]])
 
     with open(filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(["pkg", "abspath", "functions", "verified"])
+        writer.writerow(["pkg", "abspath", "functions", "verified", "binary_id"])
 
         for line in metrics:
             writer.writerow(line)
