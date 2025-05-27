@@ -16,10 +16,10 @@ def get_package_info_db():
         port="5432"
     )
 
-    query = """SELECT b.pkg, b.abspath, f.srcabspath
-               FROM binaries b JOIN binary_functions f on b.binary_id = f.binary_id
-               WHERE b.compileopt = '00000' and f.srcabspath like '/usr%'
-               ORDER BY b.pkg LIMIT 1;"""
+    query = """SELECT b.pkg, b.abspath
+               FROM binaries b
+               WHERE b.compileopt = '00000'
+               ORDER BY b.pkg LIMIT 25;"""
     packackge_container = []
     with conn.cursor() as cur:
         cur.execute(query)
@@ -50,7 +50,7 @@ def main():
     for package in packages:
         print("\nbin_path:", package[1], "\nsrc_path:", package[2])
         if contains_c_files(package[1].split("/bin/")[0]):
-            metric = dwarfinfo_return.main(package[1], package[2], True, "")
+            metric = dwarfinfo_return.main(package[1], True, "")
             metrics.append([package[1], metric[0], metric[1]])
         else:
             metrics.append([package[1], '', "No source files"])

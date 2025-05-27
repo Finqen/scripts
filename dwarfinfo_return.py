@@ -150,7 +150,7 @@ def get_srcinfo(dwarf):
             continue
     return function_container
 
-def main(path, src_path, db, lib_path):
+def main(path, db, lib_path):
 
     # lib path
     # like ("/usr/lib/llvm-VERSION/lib/libclang.so")
@@ -170,7 +170,7 @@ def main(path, src_path, db, lib_path):
             if elffile.has_dwarf_info():
                 dwarfinfo = elffile.get_dwarf_info()
                 srcinfo = get_srcinfo(dwarfinfo)
-    metrics = pretty_print(srcinfo, src_path)
+    metrics = pretty_print(srcinfo)
     return metrics
 
 
@@ -178,7 +178,7 @@ def main(path, src_path, db, lib_path):
 def determine_compiler():
     return ".c"
 
-def pretty_print(srcinfo, src_path):
+def pretty_print(srcinfo):
 
 
 
@@ -207,11 +207,11 @@ def pretty_print(srcinfo, src_path):
         if '/usr/include' in row.path:
             row.path = row.path.replace('/usr/include', '~/scripts/include')
 
-        if tree_sitter_finding_bool(src_path, row.name):
+        if tree_sitter_finding_bool(row, row.name):
             functions_list.append(row.name)
             verifications += 1
         else:
-            if defines_extension(src_path, row.name):
+            if defines_extension(row.path, row.name):
                 functions_list.append(row.name)
                 verifications += 1
 
