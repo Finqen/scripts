@@ -84,7 +84,7 @@ class DwarfFunctionInfo:
         self.verification = False
         self.verification_reason = None
 
-def get_srcinfo_db(pkg):
+def get_srcinfo_db(pkg, abspath):
     # DB Conn
     conn = psycopg.connect(
         dbname="archsrc",
@@ -94,7 +94,7 @@ def get_srcinfo_db(pkg):
         port="5432"
     )
 
-    query = """SELECT name, srcabspath, srcline, vaddr, abspath
+    query = """SELECT name, srcabspath, srcline, vaddr
                FROM binary_functions
                WHERE binary_id = (SELECT binary_id
                    FROM binaries
@@ -108,7 +108,7 @@ def get_srcinfo_db(pkg):
         for row in rows:
             if row[1] != None:
                 if row[1].startswith("/usr"):
-                    row[1] = row[4].split("/usr/")[0] + row[1].replace("/usr", "")
+                    row[1] = abspath.split("/usr/")[0] + row[1].replace("/usr", "")
                 function_container.append(DwarfFunctionInfo(row[0][0], row[1], row[2], row[3]))
 
     conn.close()
@@ -153,7 +153,7 @@ def get_srcinfo(dwarf):
             continue
     return function_container
 
-def main(pkg, db, lib_path):
+def main(pkg, abspath, db, lib_path):
 
     # lib path
     # like ("/usr/lib/llvm-VERSION/lib/libclang.so")
@@ -166,7 +166,7 @@ def main(pkg, db, lib_path):
     # check for DWARF information
     srcinfo = None
     if db:
-        srcinfo = get_srcinfo_db(pkg)
+        srcinfo = get_srcinfo_db(pkg, abspath)
     else:
         with open(pkg, 'rb') as fo:
             elffile = ELFFile(fo)
