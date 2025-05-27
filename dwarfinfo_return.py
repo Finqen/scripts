@@ -94,7 +94,7 @@ def get_srcinfo_db(pkg):
         port="5432"
     )
 
-    query = """SELECT name, srcabspath, srcline, vaddr
+    query = """SELECT name, srcabspath, srcline, vaddr, abspath
                FROM binary_functions
                WHERE binary_id = (SELECT binary_id
                    FROM binaries
@@ -106,8 +106,9 @@ def get_srcinfo_db(pkg):
         print("Found {} functions".format(len(rows)))
         print(query)
         for row in rows:
-            #print(row[0][0], row[1], row[3])
             if row[1] != None:
+                if row[1].startswith("/usr"):
+                    row[1] = row[4].split("/usr/")[0] + row[1].replace("/usr", "")
                 function_container.append(DwarfFunctionInfo(row[0][0], row[1], row[2], row[3]))
 
     conn.close()
