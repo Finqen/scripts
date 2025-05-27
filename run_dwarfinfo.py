@@ -25,9 +25,7 @@ def get_package_info_db():
         cur.execute(query)
         rows = cur.fetchall()
         for row in rows:
-            if row[2] != None:
-                srcabspath = row[1].split("/usr")[0]+row[2]
-                packackge_container.append([row[0], row[1], srcabspath])
+            packackge_container.append([row[0], row[1]])
 
     conn.close()
     return packackge_container
