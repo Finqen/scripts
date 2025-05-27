@@ -5,6 +5,11 @@ from datetime import datetime
 
 import dwarfinfo_return
 
+def beautify_pkg_name(path):
+    if len(path.split("/bin/")) == 2:
+        return path.split("/bin/")[1]
+    else:
+        return path
 
 def get_package_info_db():
     # DB Conn
@@ -46,9 +51,9 @@ def main():
     for package in packages:
         if contains_c_files(package[1].split("/bin/")[0]):
             metric = dwarfinfo_return.main(package[0], package[1], True, "")
-            metrics.append([package[1].split("/bin/")[1], package[1], metric[0], metric[1]])
+            metrics.append([beautify_pkg_name(package[1]), package[1], metric[0], metric[1]])
         else:
-            metrics.append([package[1].split("/bin/")[1], package[1], '', "No source files"])
+            metrics.append([beautify_pkg_name(package[1]), package[1], '', "No source files"])
 
     with open(filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
