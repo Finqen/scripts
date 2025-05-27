@@ -108,7 +108,7 @@ def get_srcinfo_db(pkg, abspath):
         for row in rows:
             if row[1] != None:
                 if row[1].startswith("/usr"):
-                    srcabspath = abspath.split("/usr/")[0] + row[1].replace("/usr", "")
+                    srcabspath = abspath.split("/usr/")[0] + row[1]
                     function_container.append(DwarfFunctionInfo(row[0][0], srcabspath, row[2], row[3]))
                 function_container.append(DwarfFunctionInfo(row[0][0], row[1], row[2], row[3]))
 
