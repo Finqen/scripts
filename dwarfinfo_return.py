@@ -210,7 +210,7 @@ def pretty_print(srcinfo):
         if row.path.startswith("../"):
             row.path = row.path.replace("..", "")
         if '/usr/include' in row.path:
-            row.path = "~" + row.path.replace('/usr/include', '/home/ra34koy/scripts/include').split("~")[1]
+            row.path = "/home" + row.path.replace('/usr/include', '/home/ra34koy/scripts/include').split('/home', 1)[1]
 
         if tree_sitter_finding_bool(row.path, row.name):
             functions_list.append(row.name)
