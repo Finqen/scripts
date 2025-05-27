@@ -1,7 +1,6 @@
-import subprocess
 import csv
 import psycopg
-import sys
+import os
 from datetime import datetime
 
 import dwarfinfo_return
@@ -33,6 +32,15 @@ def get_package_info_db():
     conn.close()
     return packackge_container
 
+def contains_c_files(srcpath):
+    for foldername, subfolders, filenames in os.walk(srcpath):
+        for filename in filenames:
+            # Überprüfe, ob die Dateiendung übereinstimmt
+            if filename.endswith('.c') or filename.endswith('.h'):
+                return True
+
+    return False
+
 def main():
     now = datetime.now()
     datum_str = now.strftime("%Y-%m-%d-%H_%M_%S")
@@ -40,9 +48,12 @@ def main():
     packages = get_package_info_db()
     metrics = []
     for package in packages:
-        metric = dwarfinfo_return.main(package[1], package[2], True, "")
-        print("\nbin_path:",package[1],"\nsrc_path:",package[2])
-        metrics.append([package[1], metric[0], metric[1]])
+        print("\nbin_path:", package[1], "\nsrc_path:", package[2])
+        if contains_c_files(package[2]):
+            metric = dwarfinfo_return.main(package[1], package[2], True, "")
+            metrics.append([package[1], metric[0], metric[1]])
+        else:
+            metrics.append([package[1], '', "No source files"])
 
     with open(filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
