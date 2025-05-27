@@ -98,7 +98,7 @@ def get_srcinfo_db(pkg):
                FROM binary_functions
                WHERE binary_id = (SELECT binary_id
                    FROM binaries
-               WHERE compileopt = '00000' and pkg = '{pkg}');""".format(path=path)
+               WHERE compileopt = '00000' and pkg = '{pkg}');""".format(pkg=pkg)
     function_container = []
     with conn.cursor() as cur:
         cur.execute(query)
