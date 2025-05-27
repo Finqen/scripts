@@ -19,7 +19,7 @@ def get_package_info_db():
     query = """SELECT b.pkg, b.abspath
                FROM binaries b
                WHERE b.compileopt = '00000'
-               ORDER BY b.pkg LIMIT 1;"""
+               ORDER BY b.pkg;"""
     packackge_container = []
     with conn.cursor() as cur:
         cur.execute(query)
