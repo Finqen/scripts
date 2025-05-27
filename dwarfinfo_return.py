@@ -324,18 +324,23 @@ def _gl_check(code, function_name):
     return False
 
 def find_function_names(node):
-    #print("Searching for function names in tree...node", str(node.type))
-    if str(node.type) == 'function_declarator' or str(node.type) == 'function_declaration':
-        #print("Found function declarator")
+    try:
+        #print("Searching for function names in tree...node", str(node.type))
+        if str(node.type) == 'function_declarator' or str(node.type) == 'function_declaration':
+            #print("Found function declarator")
+            for child in node.named_children:
+                #print(str(child.type))
+                if str(child.type) == 'identifier':
+                    #print(child.text.decode('utf-8'))
+                    function_names.append(child.text.decode('utf-8'))
         for child in node.named_children:
-            #print(str(child.type))
-            if str(child.type) == 'identifier':
-                #print(child.text.decode('utf-8'))
-                function_names.append(child.text.decode('utf-8'))
-    for child in node.named_children:
-        find_function_names(child)
+            find_function_names(child)
 
-    return function_names
+        return function_names
+    except Exception as error:
+        print("#############")
+        print(error)
+        return None
 
 
 
