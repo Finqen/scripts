@@ -1,6 +1,7 @@
 import csv
 import psycopg
 import os
+import time
 from datetime import datetime
 
 import dwarfinfo_return
@@ -49,11 +50,13 @@ def main():
     metrics = []
     for package in packages:
         print("\nbin_path:", package[1], "\nsrc_path:", package[2])
-        if contains_c_files(package[2]):
+        if contains_c_files(package[1]):
             metric = dwarfinfo_return.main(package[1], package[2], True, "")
             metrics.append([package[1], metric[0], metric[1]])
         else:
             metrics.append([package[1], '', "No source files"])
+        time.sleep(10)
+
 
     with open(filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
