@@ -45,12 +45,11 @@ def contains_c_files(srcpath):
 def write_to_csv_file(filename, line):
     with open(filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(["pkg", "abspath", "functions", "verified", "binary_id"])
         writer.writerow(line)
     csvfile.close()
 
 def create_csv_file(filename):
-    with open(filename, 'w', newline='') as csvfile:
+    with open(filename, 'a', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["pkg", "abspath", "functions", "verified", "binary_id"])
     csvfile.close()
@@ -60,7 +59,6 @@ def main():
     datum_str = now.strftime("%Y-%m-%d-%H_%M_%S")
     filename = datum_str + ".csv"
     packages = get_package_info_db()
-    metrics = []
     create_csv_file(filename)
     for package in packages:
         if contains_c_files(package[1].split("/bin/")[0]):
@@ -71,7 +69,7 @@ def main():
         write_to_csv_file(filename, line)
 
     duration = datetime.now()-now
-    print("Done! Running took: " + str(duration.total_seconds()))
+    print("Done! Running took: " + str(duration.total_seconds()) + " seconds...")
 
 #python run_dwarfinfo.py &> output.log &
 if __name__ == '__main__':
