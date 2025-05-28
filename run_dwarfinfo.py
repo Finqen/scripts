@@ -24,7 +24,7 @@ def get_package_info_db():
     query = """SELECT b.pkg, b.abspath, b.binary_id
                FROM binaries b
                WHERE b.compileopt = '00000' AND b.pkg NOT LIKE 'aarch64-linux-gnu-%'
-               ORDER BY b.pkg;"""
+               ORDER BY b.pkg LIMIT 10;"""
     packackge_container = []
     with conn.cursor() as cur:
         cur.execute(query)
@@ -73,6 +73,6 @@ def main():
     duration = datetime.now()-now
     print("Done! Running took: " + str(duration.total_seconds()))
 
-
+#python run_dwarfinfo.py &> output.log &
 if __name__ == '__main__':
     main()
