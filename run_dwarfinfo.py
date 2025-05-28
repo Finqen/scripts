@@ -43,13 +43,13 @@ def contains_c_files(srcpath):
     return False
 
 def write_to_csv_file(filename, line):
-    with open(filename, 'w', newline='') as csvfile:
+    with open(filename, 'a', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(line)
     csvfile.close()
 
 def create_csv_file(filename):
-    with open(filename, 'a', newline='') as csvfile:
+    with open(filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["pkg", "abspath", "functions", "verified", "binary_id"])
     csvfile.close()
