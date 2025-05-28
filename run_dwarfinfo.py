@@ -42,27 +42,33 @@ def contains_c_files(srcpath):
 
     return False
 
+def write_to_csv_file(filename, line):
+    with open(filename, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(["pkg", "abspath", "functions", "verified", "binary_id"])
+        writer.writerow(line)
+    csvfile.close()
+
+def create_csv_file(filename):
+    with open(filename, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(["pkg", "abspath", "functions", "verified", "binary_id"])
+    csvfile.close()
+
 def main():
     now = datetime.now()
     datum_str = now.strftime("%Y-%m-%d-%H_%M_%S")
     filename = datum_str + ".csv"
     packages = get_package_info_db()
     metrics = []
+    create_csv_file(filename)
     for package in packages:
         if contains_c_files(package[1].split("/bin/")[0]):
             metric = dwarfinfo_return.main(package[0], package[1], True, "")
-            metrics.append([beautify_pkg_name(package[1]), package[1], metric[0], metric[1], package[2]])
+            line = [beautify_pkg_name(package[1]), package[1], metric[0], metric[1], package[2]]
         else:
-            metrics.append([beautify_pkg_name(package[1]), package[1], '', "No source files", package[2]])
-
-    with open(filename, 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(["pkg", "abspath", "functions", "verified", "binary_id"])
-
-        for line in metrics:
-            writer.writerow(line)
-
-    csvfile.close()
+            line = [beautify_pkg_name(package[1]), package[1], '', "No source files", package[2]]
+        write_to_csv_file(filename, line)
 
     duration = datetime.now()-now
     print("Done! Running took: " + str(duration.total_seconds()))
