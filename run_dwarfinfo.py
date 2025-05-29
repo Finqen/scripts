@@ -20,8 +20,8 @@ def get_package_info_db():
 
     query = """SELECT b.pkg, b.abspath, b.binary_id, b.relpath
                FROM binaries b
-               WHERE b.compileopt = '00000' AND b.pkg = 'argon2-20190702-5-x86_64'
-               ORDER BY b.pkg;"""
+               WHERE b.compileopt = '00000'
+               ORDER BY b.pkg DESC LIMIT 100;"""
     packackge_container = []
     with conn.cursor() as cur:
         cur.execute(query)
