@@ -85,8 +85,14 @@ class DwarfFunctionInfo:
         self.verification_reason = None
 
 def find_file(abspath, partial_path):
-    #print('Trying to find file: ' + partial_path + '\n in : ' + abspath)
+
     abspath = abspath.split('/bin/')[0]
+
+    if './' in partial_path:
+        partial_path = partial_path.rsplit('./')[-1]
+    if '../' in partial_path:
+        partial_path = partial_path.rsplit('../')[-1]
+
     for foldername, subfolders, filenames in os.walk(abspath):
         for filename in filenames:
             full_path = os.path.join(foldername, filename)
