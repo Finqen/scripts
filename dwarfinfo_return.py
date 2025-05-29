@@ -116,7 +116,8 @@ def get_srcinfo_db(pkg, abspath, binary_id):
             if row[1] is not None:
                 srcabspath = row[1]
                 if not row[1].startswith("/binary-datasets"):
-                    srcabspath = find_file(abspath.split("/binary-datasets")[0], row[1])
+                    srcabspath = find_file(abspath, row[1])
+                    print("Srcabspath: " + srcabspath)
 
                 function_container.append(DwarfFunctionInfo(row[0][0], srcabspath, row[2], row[3]))
 
