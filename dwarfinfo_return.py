@@ -93,7 +93,7 @@ def find_file(abspath, partial_path):
 
     return None
 
-def get_srcinfo_db(pkg, abspath):
+def get_srcinfo_db(pkg, abspath, binary_id):
     # DB Conn
     conn = psycopg.connect(
         dbname="archsrc",
@@ -105,9 +105,7 @@ def get_srcinfo_db(pkg, abspath):
 
     query = """SELECT name, srcabspath, srcline, vaddr
                FROM binary_functions
-               WHERE binary_id IN (SELECT binary_id
-                   FROM binaries
-               WHERE compileopt = '00000' and pkg = '{pkg}');""".format(pkg=pkg)
+               WHERE binary_id = '{binary_id}');""".format(binary_id=binary_id)
     function_container = []
     with conn.cursor() as cur:
         cur.execute(query)
@@ -123,6 +121,8 @@ def get_srcinfo_db(pkg, abspath):
                     srcabspath = find_file(abspath.split("/usr/")[0], row[1].replace("../", ""))
                 elif row[1].startswith("./../"):
                     srcabspath = find_file(abspath.split("/usr/")[0], row[1].replace("./../", ""))
+                elif row[1].startswith("src/"):
+                    srcabspath = find_file(abspath.split("/usr/")[0], row[1])
 
                 function_container.append(DwarfFunctionInfo(row[0][0], srcabspath, row[2], row[3]))
 
@@ -168,7 +168,7 @@ def get_srcinfo(dwarf):
             continue
     return function_container
 
-def main(pkg, abspath, db, lib_path):
+def main(pkg, abspath, db, lib_path, binary_id):
 
     # lib path
     # like ("/usr/lib/llvm-VERSION/lib/libclang.so")
@@ -181,7 +181,7 @@ def main(pkg, abspath, db, lib_path):
     # check for DWARF information
     srcinfo = None
     if db:
-        srcinfo = get_srcinfo_db(pkg, abspath)
+        srcinfo = get_srcinfo_db(pkg, abspath, binary_id)
     else:
         with open(pkg, 'rb') as fo:
             elffile = ELFFile(fo)
@@ -387,4 +387,4 @@ def print_if(string, name):
 
 
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
