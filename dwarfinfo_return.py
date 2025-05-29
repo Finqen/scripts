@@ -113,16 +113,10 @@ def get_srcinfo_db(pkg, abspath, binary_id):
         print("Found {} functions".format(len(rows)))
         #print(query)
         for row in rows:
-            if row[1] != None:
+            if row[1] is not None:
                 srcabspath = row[1]
-                if row[1].startswith("/usr"):
-                    srcabspath = abspath.split("/usr/")[0] + row[1]
-                elif row[1].startswith("../"):
-                    srcabspath = find_file(abspath.split("/usr/")[0], row[1].replace("../", ""))
-                elif row[1].startswith("./../"):
-                    srcabspath = find_file(abspath.split("/usr/")[0], row[1].replace("./../", ""))
-                elif row[1].startswith("src/"):
-                    srcabspath = find_file(abspath.split("/usr/")[0], row[1])
+                if not row[1].startswith("/binary-datasets"):
+                    srcabspath = find_file(abspath.split("/binary-datasets")[0], row[1])
 
                 function_container.append(DwarfFunctionInfo(row[0][0], srcabspath, row[2], row[3]))
 
