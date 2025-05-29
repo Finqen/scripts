@@ -86,6 +86,7 @@ class DwarfFunctionInfo:
 
 def find_file(abspath, partial_path):
     print('Trying to find file: ' + partial_path + '\n in : ' + abspath)
+    abspath = abspath.split('/bin/')[0]
     for foldername, subfolders, filenames in os.walk(abspath):
         for filename in filenames:
             full_path = os.path.join(foldername, filename)
