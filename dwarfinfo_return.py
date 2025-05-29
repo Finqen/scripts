@@ -117,7 +117,7 @@ def get_srcinfo_db(pkg, abspath, binary_id):
                 srcabspath = row[1]
                 if not row[1].startswith("/binary-datasets"):
                     srcabspath = find_file(abspath, row[1])
-                    print("Srcabspath: " + srcabspath)
+                    print("Srcabspath: " + str(srcabspath))
 
                 function_container.append(DwarfFunctionInfo(row[0][0], srcabspath, row[2], row[3]))
 
