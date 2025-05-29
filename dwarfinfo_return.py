@@ -85,14 +85,14 @@ class DwarfFunctionInfo:
         self.verification_reason = None
 
 def find_file(abspath, partial_path):
-    print('Trying to find file: ' + partial_path + '\n in : ' + abspath)
+    #print('Trying to find file: ' + partial_path + '\n in : ' + abspath)
     abspath = abspath.split('/bin/')[0]
     for foldername, subfolders, filenames in os.walk(abspath):
         for filename in filenames:
             full_path = os.path.join(foldername, filename)
             if full_path.endswith(partial_path):
                 return full_path
-
+    print('NOT FOUND SOURCE FILE \nTrying to find file: ' + partial_path + '\n in : ' + abspath)
     return None
 
 def get_srcinfo_db(pkg, abspath, binary_id):
@@ -112,14 +112,13 @@ def get_srcinfo_db(pkg, abspath, binary_id):
     with conn.cursor() as cur:
         cur.execute(query)
         rows = cur.fetchall()
-        print("Found {} functions".format(len(rows)))
+        #print("Found {} functions".format(len(rows)))
         #print(query)
         for row in rows:
             if row[1] is not None:
                 srcabspath = row[1]
                 if not row[1].startswith("/binary-datasets"):
                     srcabspath = find_file(abspath, row[1])
-                    print("Srcabspath: " + str(srcabspath))
 
                 function_container.append(DwarfFunctionInfo(row[0][0], srcabspath, row[2], row[3]))
 
