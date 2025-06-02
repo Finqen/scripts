@@ -92,7 +92,7 @@ def find_file(abspath, partial_path):
         partial_path = partial_path.rsplit('./')[-1]
     if '../' in partial_path:
         partial_path = partial_path.rsplit('../')[-1]
-    if partial_path.startswith('/usr/src') or partial_path.startswith('/usr/lib'):
+    if partial_path.startswith('/usr/src') or partial_path.startswith('/usr/lib') or partial_path.startswith('/usr/local/'):
         partial_path = partial_path.rsplit('/usr/')[-1]
 
     if partial_path.startswith('/usr/include/'):
