@@ -93,6 +93,9 @@ def find_file(abspath, partial_path):
     if '../' in partial_path:
         partial_path = partial_path.rsplit('../')[-1]
 
+    if partial_path.startswith('/usr/include/'):
+       return partial_path
+
     for foldername, subfolders, filenames in os.walk(abspath):
         for filename in filenames:
             full_path = os.path.join(foldername, filename)
@@ -314,18 +317,23 @@ def get_code(path):
         with open(path, 'r') as file:
             code = file.read()
         return code
-    except:
+    except Exception as error:
         print("Path: " + path)
+        print(error)
         return None
 
 
 def _gl_check(code, function_name):
-    lines = code.splitlines()
-    for i, line in enumerate(lines):
-        if '_GL_' in line:
-            if function_name in lines[i + 1]:
-                return True
-    return False
+    try:
+        lines = code.splitlines()
+        for i, line in enumerate(lines):
+            if '_GL_' in line:
+                if function_name in lines[i + 1]:
+                    return True
+    except Exception as error:
+        print("GL_Check failed for: " + function_name)
+        print(error)
+        return False
 
 def find_function_names(node):
     try:
