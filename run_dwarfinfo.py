@@ -20,7 +20,7 @@ def get_package_info_db():
 
     query = """SELECT b.pkg, b.abspath, b.binary_id, b.relpath
                FROM binaries b
-               WHERE b.compileopt = '00000'
+               WHERE b.compileopt = '00000' AND pkg like 'aarch64-linux-gnu-binutils%'
                ORDER BY b.pkg;"""
     packackge_container = []
     with conn.cursor() as cur:
@@ -69,5 +69,6 @@ def main():
     print("Done! Running took: " + str(duration.total_seconds()) + " seconds...")
 
 #python run_dwarfinfo.py &> output.log &
+#tmux zum starten des Skript
 if __name__ == '__main__':
     main()

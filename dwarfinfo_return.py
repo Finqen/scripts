@@ -10,6 +10,7 @@ import clang.cindex
 function_names = []
 LIBPATH = None
 
+sys.setrecursionlimit(10**6)
 
 def find_macro_chain(filename, target_name, include_dirs=None):
 
