@@ -185,7 +185,7 @@ def main(pkg, abspath, db, lib_path, binary_id):
         LIBPATH = lib_path
         clang.cindex.Config.set_library_file(lib_path)
 
-    print("Starting script for " + pkg + " ...")
+    print("Starting script for package: " + pkg + " and binary: " + abspath.split('/')[-1])
     # check for DWARF information
     srcinfo = None
     if db:
