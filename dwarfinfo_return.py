@@ -97,6 +97,9 @@ def find_file(abspath, partial_path):
     if 'src/debug/' in partial_path:
         partial_path = partial_path.rsplit('src/debug/')[-1]
 
+    if '/src/' in partial_path:
+        partial_path partial_path.rsplit("/src", 1)
+
     if partial_path.startswith('/usr/include/'):
        return partial_path
 
