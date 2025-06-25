@@ -87,8 +87,6 @@ class DwarfFunctionInfo:
 
 def find_file(abspath, partial_path):
 
-    abspath = abspath.split('/bin/')[0]
-
     if './' in partial_path:
         partial_path = partial_path.rsplit('./')[-1]
     if '../' in partial_path:
@@ -129,8 +127,8 @@ def get_srcinfo_db(pkg, abspath, binary_id):
         for row in rows:
             if row[1] is not None:
                 srcabspath = row[1]
-                if not row[1].startswith("/binary-datasets"):
-                    srcabspath = find_file(abspath, row[1])
+                if not row[1].startswith("/small-db"):
+                    srcabspath = find_file("/small-db/output/source/" + pkg, row[1])
 
                 function_container.append(DwarfFunctionInfo(row[0][0], srcabspath, row[2], row[3]))
 
