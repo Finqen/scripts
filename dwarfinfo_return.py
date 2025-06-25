@@ -110,7 +110,7 @@ def find_file(abspath, partial_path):
 def get_srcinfo_db(pkg, abspath, binary_id):
     # DB Conn
     conn = psycopg.connect(
-        dbname="archsrc",
+        dbname="small-db",
         user="rouser",
         password="",
         host="kuria",

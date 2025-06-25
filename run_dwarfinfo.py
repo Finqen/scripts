@@ -1,4 +1,6 @@
 import csv
+import sys
+
 import psycopg
 import os
 from datetime import datetime
@@ -8,10 +10,10 @@ import dwarfinfo_return
 def beautify_name(path):
         return path.split('/')[-1]
 
-def get_package_info_db():
+def get_package_info_db(compile_opt):
     # DB Conn
     conn = psycopg.connect(
-        dbname="archsrc",
+        dbname="small-db",
         user="rouser",
         password="",
         host="kuria",
@@ -20,8 +22,8 @@ def get_package_info_db():
 
     query = """SELECT b.pkg, b.abspath, b.binary_id, b.relpath
                FROM binaries b
-               WHERE b.compileopt = '00003'
-               ORDER BY b.pkg;"""
+               WHERE b.compileopt = '{compile_opt}' AND b.binaryid = '1109'
+               ORDER BY b.pkg;""".format(compile_opt=compile_opt)
     packackge_container = []
     with conn.cursor() as cur:
         cur.execute(query)
@@ -51,11 +53,11 @@ def create_csv_file(filename):
         writer.writerow(["bin", "pkg", "abspath", "functions", "verified", "binary_id"])
     csvfile.close()
 
-def main():
+def main(compile_opt):
     now = datetime.now()
     datum_str = now.strftime("%Y-%m-%d-%H_%M_%S")
     filename = datum_str + ".csv"
-    packages = get_package_info_db()
+    packages = get_package_info_db(compile_opt)
     create_csv_file(filename)
     for package in packages:
         if contains_c_files(package[1].split("/bin/")[0]):
@@ -71,4 +73,4 @@ def main():
 #python run_dwarfinfo.py &> output.log &
 #tmux zum starten des Skript
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1])
