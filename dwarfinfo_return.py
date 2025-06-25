@@ -87,12 +87,17 @@ class DwarfFunctionInfo:
 
 def find_file(abspath, partial_path):
 
+
+
     if './' in partial_path:
         partial_path = partial_path.rsplit('./')[-1]
     if '../' in partial_path:
         partial_path = partial_path.rsplit('../')[-1]
     if partial_path.startswith('/usr/src') or partial_path.startswith('/usr/lib') or partial_path.startswith('/usr/local/'):
         partial_path = partial_path.rsplit('/usr/')[-1]
+
+    if 'src/debug/' in partial_path:
+        partial_path = partial_path.rsplit('src/debug/')[-1]
 
     if partial_path.startswith('/usr/include/'):
        return partial_path
