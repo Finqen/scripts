@@ -22,7 +22,7 @@ def get_package_info_db(compile_opt):
 
     query = """SELECT b.pkg, b.abspath, b.binary_id, b.relpath
                FROM binaries b
-               WHERE b.compileopt = '{compile_opt}' AND b.binaryid = '1109'
+               WHERE b.compileopt = '{compile_opt}' AND b.binary_id = '1109'
                ORDER BY b.pkg;""".format(compile_opt=compile_opt)
     packackge_container = []
     with conn.cursor() as cur:
