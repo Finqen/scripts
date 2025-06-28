@@ -87,6 +87,10 @@ class DwarfFunctionInfo:
 
 def find_file(abspath, partial_path):
 
+
+    print("Abs:", abspath)
+    print("Partial:", partial_path)
+
     if './' in partial_path:
         partial_path = partial_path.rsplit('./')[-1]
     if '../' in partial_path:
