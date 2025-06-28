@@ -132,7 +132,7 @@ def get_srcinfo_db(pkg, abspath, binary_id):
     with conn.cursor() as cur:
         cur.execute(query)
         rows = cur.fetchall()
-        #print("Found {} functions".format(len(rows)))
+        print("Found {} functions".format(len(rows)))
         #print(query)
         for row in rows:
             if row[1] is not None:
