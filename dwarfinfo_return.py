@@ -139,6 +139,8 @@ def get_srcinfo_db(pkg, abspath, binary_id):
                 srcabspath = find_file("/small-db/output/source/", row[1])
 
                 function_container.append(DwarfFunctionInfo(row[0][0], srcabspath, row[2], row[3]))
+            else:
+                print(pkg, row[0][0], row[1])
 
     conn.close()
     return function_container
