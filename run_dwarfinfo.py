@@ -28,6 +28,7 @@ def get_package_info_db(compile_opt):
     with conn.cursor() as cur:
         cur.execute(query)
         rows = cur.fetchall()
+        print("Found {} binaries".format(len(rows)))
         for row in rows:
             packackge_container.append([row[0], row[1], row[2], row[3]])
     conn.close()
