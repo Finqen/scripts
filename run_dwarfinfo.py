@@ -28,7 +28,6 @@ def get_package_info_db(compile_opt):
     with conn.cursor() as cur:
         cur.execute(query)
         rows = cur.fetchall()
-        print("Found {} binaries".format(len(rows)))
         for row in rows:
             packackge_container.append([row[0], row[1], row[2], row[3]])
     conn.close()
@@ -61,11 +60,8 @@ def main(compile_opt):
     packages = get_package_info_db(compile_opt)
     create_csv_file(filename)
     for package in packages:
-        if contains_c_files(package[1].split("/bin/")[0]):
-            metric = dwarfinfo_return.main(package[0], package[1], True, "", package[2])
-            line = [beautify_name(package[3]), package[0], package[1], metric[0], metric[1], package[2]]
-        else:
-            line = [beautify_name(package[3]), package[0], package[1], '', "No source files", package[2]]
+        metric = dwarfinfo_return.main(package[0], package[1], True, "", package[2])
+        line = [beautify_name(package[3]), package[0], package[1], metric[0], metric[1], package[2]]
         write_to_csv_file(filename, line)
 
     duration = datetime.now()-now
