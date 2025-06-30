@@ -85,12 +85,17 @@ class DwarfFunctionInfo:
         self.verification = False
         self.verification_reason = None
 
-def find_file(abspath, partial_path):
 
+def clean_packagename(pkg):
+    return re.split(r'[-_]', pkg, maxsplit=1)[0]
 
-    #print("Abs:", abspath)
-    #print("Partial:", partial_path)
+def find_file(abspath, partial_path, pkg):
 
+    source_path = abspath + clean_packagename(pkg)
+    source_filename = partial_path.rsplit('/')[-1]
+
+    # DEPRECATED
+    '''
     if './' in partial_path:
         partial_path = partial_path.rsplit('./')[-1]
     if '../' in partial_path:
@@ -106,13 +111,15 @@ def find_file(abspath, partial_path):
 
     if partial_path.startswith('/usr/include/'):
        return partial_path
+    '''
 
-    for foldername, subfolders, filenames in os.walk(abspath):
+    for foldername, subfolders, filenames in os.walk(source_path):
         for filename in filenames:
             full_path = os.path.join(foldername, filename)
-            if full_path.endswith(partial_path):
+            if full_path.endswith(source_filename):
                 return full_path
-    print('NOT FOUND SOURCE FILE \nTrying to find file: ' + partial_path + '\n in : ' + abspath)
+
+    print('NOT FOUND SOURCE FILE \nTrying to find file: ' + source_filename + '\n in : ' + abspath)
     return None
 
 def get_srcinfo_db(pkg, abspath, binary_id):
@@ -134,7 +141,7 @@ def get_srcinfo_db(pkg, abspath, binary_id):
         rows = cur.fetchall()
         for row in rows:
             if row[1] is not None:
-                srcabspath = find_file("/small-db/output/source/", row[1])
+                srcabspath = find_file("/small-db/output/source/", row[1], pkg)
 
                 function_container.append(DwarfFunctionInfo(row[0][0], srcabspath, row[2], row[3]))
     conn.close()
