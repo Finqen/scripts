@@ -91,16 +91,20 @@ def clean_packagename(pkg):
 
 
 def best_matching_subpath(candidates, reference):
-    best_match = ""
 
-    for start in range(len(candidates) - 1, -1, -1):
-        subpath = candidates[start:]
-        joined = ''.join(subpath)
-        if reference.startswith(joined):
-            best_match = subpath
-            break  # longest match from end to start, so we can stop here
-    print("Bestmatch: " + best_match)
-    return best_match
+    reference_words = reference.split("/")[::-1]
+
+    for i, word in enumerate(reference_words):
+        if len(word) == 0:
+            print("No source file found in package!")
+            return None
+        if len(candidates) == 1:
+            return candidates[0]
+        for candidate in candidates:
+            rev_split_reference = candidate.split("/")[::-1]
+            if word != rev_split_reference[i]:
+                candidates.remove(candidate)
+    return None
 
 def find_file(abspath, partial_path, pkg):
 
@@ -111,6 +115,7 @@ def find_file(abspath, partial_path, pkg):
 
     print("Sourcepath: " + source_path)
     print("Sourcefilename: " + source_filename)
+    print("Partialpath: " + partial_path)
     # DEPRECATED
     '''
     if './' in partial_path:

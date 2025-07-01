@@ -1,6 +1,7 @@
 from unittest import TestCase
-from dwarfinfo import DwarfFunctionInfo, pretty_print, traverse_for_function, check_if_really_a_function, \
+from dwarfinfo import DwarfFunctionInfo, pretty_print, check_if_really_a_function, \
     check_if_really_a_function_next_line, ts_get_function, tree_sitter_finding_bool
+from dwarfinfo_return import best_matching_subpath
 from mock import patch
 import re
 
@@ -75,3 +76,14 @@ class Test(TestCase):
         match = re.match(r"# define\s+(\S+)\s+" + name, line)
         print("Match: ", match.group(1))
         assert match[1] == "full_rw"
+
+    def test_best_match(self):
+        candidates = ["/small-db/output/source/xz/xz/src/xz/util.c",
+                      "/small-db/output/source/xz/xz/src/liblzma/common/block_util.c"]
+
+        partialpath = "common/block_util.c"
+
+        print("candidate: ", candidates[0])
+        print("best_matching_subpath: ", best_matching_subpath(candidates, partialpath))
+
+        assert (best_matching_subpath(candidates, partialpath) is candidates[0])
