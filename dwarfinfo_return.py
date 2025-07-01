@@ -143,7 +143,7 @@ def find_file(abspath, partial_path, pkg):
             full_path = os.path.join(foldername, filename)
             if full_path.endswith(source_filename):
                 candidates.append(full_path)
-                print("Candidate: " + full_path)
+                #print("Candidate: " + full_path)
 
     if len(candidates) == 0:
         print('NOT FOUND SOURCE FILE \nTrying to find file: ' + source_filename + '\n in : ' + abspath)
