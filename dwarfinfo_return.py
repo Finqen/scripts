@@ -99,6 +99,7 @@ def best_matching_subpath(candidates, reference):
             print("No source file found in package!")
             return None
         if len(candidates) == 1:
+            print("Best match: " + candidates[0])
             return candidates[0]
         for candidate in candidates:
             rev_split_reference = candidate.split("/")[::-1]
