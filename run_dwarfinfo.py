@@ -53,10 +53,10 @@ def create_csv_file(filename):
         writer.writerow(["bin", "pkg", "abspath", "functions", "verified", "binary_id"])
     csvfile.close()
 
-def main(compile_opt):
+def main(compile_opt, filename_prefix):
     now = datetime.now()
     datum_str = now.strftime("%Y-%m-%d-%H_%M_%S")
-    filename = datum_str + ".csv"
+    filename = filename_prefix + "_" + compile_opt + "_" + datum_str + ".csv"
     packages = get_package_info_db(compile_opt)
     create_csv_file(filename)
     for package in packages:
@@ -70,4 +70,4 @@ def main(compile_opt):
 #python run_dwarfinfo.py &> output.log &
 #tmux zum starten des Skript
 if __name__ == '__main__':
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])

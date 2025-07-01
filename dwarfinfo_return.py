@@ -89,8 +89,22 @@ class DwarfFunctionInfo:
 def clean_packagename(pkg):
     return re.split(r'[-_]', pkg, maxsplit=1)[0]
 
+
+def best_matching_subpath(candidates, reference):
+    best_match = ""
+
+    for start in range(len(candidates) - 1, -1, -1):
+        subpath = candidates[start:]
+        joined = ''.join(subpath)
+        if reference.startswith(joined):
+            best_match = subpath
+            break  # longest match from end to start, so we can stop here
+    return best_match
+
 def find_file(abspath, partial_path, pkg):
 
+
+    # slash erweitern bei multiple findings
     source_path = abspath + clean_packagename(pkg)
     source_filename = partial_path.rsplit('/')[-1]
 
@@ -113,13 +127,21 @@ def find_file(abspath, partial_path, pkg):
        return partial_path
     '''
 
+    candidates = []
+
     for foldername, subfolders, filenames in os.walk(source_path):
         for filename in filenames:
             full_path = os.path.join(foldername, filename)
             if full_path.endswith(source_filename):
-                return full_path
+                candidates.append(full_path)
 
-    print('NOT FOUND SOURCE FILE \nTrying to find file: ' + source_filename + '\n in : ' + abspath)
+    if len(candidates) == 0:
+        print('NOT FOUND SOURCE FILE \nTrying to find file: ' + source_filename + '\n in : ' + abspath)
+    elif len(candidates) == 1:
+        return candidates[0]
+    else:
+        return best_matching_subpath(candidates, partial_path)
+
     return None
 
 def get_srcinfo_db(pkg, abspath, binary_id):
