@@ -96,10 +96,10 @@ def best_matching_subpath(candidates, reference):
 
     for i, word in enumerate(reference_words):
         if len(word) == 0:
-            print("No source file found in package!")
+            #print("No source file found in package!")
             return None
         if len(candidates) == 1:
-            print("Best match: " + candidates[0])
+            #print("Best match: " + candidates[0])
             return candidates[0]
         for candidate in candidates:
             rev_split_reference = candidate.split("/")[::-1]
@@ -114,9 +114,9 @@ def find_file(abspath, partial_path, pkg):
     source_path = abspath + clean_packagename(pkg)
     source_filename = partial_path.rsplit('/')[-1]
 
-    print("Sourcepath: " + source_path)
-    print("Sourcefilename: " + source_filename)
-    print("Partialpath: " + partial_path)
+    #print("Sourcepath: " + source_path)
+    #print("Sourcefilename: " + source_filename)
+    #print("Partialpath: " + partial_path)
     # DEPRECATED
     '''
     if './' in partial_path:
