@@ -108,6 +108,8 @@ def find_file(abspath, partial_path, pkg):
     source_path = abspath + clean_packagename(pkg)
     source_filename = partial_path.rsplit('/')[-1]
 
+    print("Sourcepath: " + source_path)
+    print("Sourcefilename: " + source_filename)
     # DEPRECATED
     '''
     if './' in partial_path:
@@ -134,6 +136,7 @@ def find_file(abspath, partial_path, pkg):
             full_path = os.path.join(foldername, filename)
             if full_path.endswith(source_filename):
                 candidates.append(full_path)
+                print("Candidate: " + full_path)
 
     if len(candidates) == 0:
         print('NOT FOUND SOURCE FILE \nTrying to find file: ' + source_filename + '\n in : ' + abspath)
