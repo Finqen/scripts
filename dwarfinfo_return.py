@@ -99,6 +99,7 @@ def best_matching_subpath(candidates, reference):
         if reference.startswith(joined):
             best_match = subpath
             break  # longest match from end to start, so we can stop here
+    print("Bestmatch: " + best_match)
     return best_match
 
 def find_file(abspath, partial_path, pkg):
